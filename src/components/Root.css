@@ -1,0 +1,21 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	/* border: 0.5px solid red; */
+}
+
+body {
+	font-family: 'Roboto', Helvetica, sans-serif;
+}
+
+p {
+	line-height: 20px;
+	font-size: 14px;
+}
+
+.container {
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+}
