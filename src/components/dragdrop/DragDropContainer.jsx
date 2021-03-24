@@ -1,81 +1,104 @@
-import './DragDropContainer.css';
+import './dragdropStyles.css';
 import { useEffect, useState, useRef } from 'react';
 import DragAndDropSection from './DragDropSection';
 
-let notStarted = [
-	{
-		id: 1,
-		text: 'this is item 1',
-	},
-	{
-		id: 2,
-		text:
-			"s simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-	},
-	{
-		id: 3,
-		text: 'this is item 3',
-	},
-	{
-		id: 4,
-		text:
-			"Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy",
-	},
-];
-let inProgress = [];
-let done = [];
-let others = [];
-
-export default function DragDropContainer() {
-	const [itemID, setItemID] = useState(0);
-	const [itemIDFrom, setItemIDFrom] = useState(0);
-	const [itemIDTo, setItemIDTo] = useState(0);
+export default function DragDropContainer({ title, sections, data }) {
+	const notStarted = data.filter((item) => item.section === 'Not Started');
+	const inProgress = data.filter((item) => item.section === 'In Progress');
+	const done = data.filter((item) => item.section === 'Done');
+	const others = data.filter((item) => item.section === 'Others');
+	// dragged item states
+	const [itemID, setItemID] = useState(null);
+	const [itemIDFrom, setItemIDFrom] = useState(null);
+	const [itemIDTo, setItemIDTo] = useState(null);
+	// list item states
 	const [notStartedList, setNotStartedList] = useState(notStarted);
 	const [inProgressList, setInProgressList] = useState(inProgress);
 	const [doneList, setDoneList] = useState(done);
 	const [othersList, setOthersList] = useState(others);
+	// list item styles states
+	const [notStartedSection, setNotStartedSection] = useState('section');
+	const [inProgressSection, setInProgressSection] = useState('section');
+	const [doneSection, setDoneSection] = useState('section');
+	const [othersSection, setOthersSection] = useState('section');
+
 	let evaluateClass = useRef(null);
 
-	const [notStartedSection, setNotStartedSection] = useState('list');
-	const [inProgressSection, setInProgressSection] = useState('list');
-	const [doneSection, setDoneSection] = useState('list');
-	const [othersSection, setOthersSection] = useState('list');
+	// Action Handlers
+	const handleDragStart = (id, fr) => {
+		// clear the previous dragged item states before starting a new one
+		clearDraggedItem();
+		// capture new dragged item id
+		setItemID(id);
+		setItemIDFrom(fr);
+	};
 
-	let sections = [
-		{
-			name: 'Not Started',
-			items: notStartedList,
-		},
-		{
-			name: 'In Progress',
-			items: inProgressList,
-		},
-		{
-			name: 'Done',
-			items: doneList,
-		},
-		{
-			name: 'Others',
-			items: othersList,
-		},
-	];
+	const handleDragOver = (evt, sectionID) => {
+		evt.preventDefault();
 
+		if (sectionID !== itemIDFrom) {
+			switch (sectionID) {
+				case 'Not Started':
+					if (!notStartedSection.includes('hovered')) setNotStartedSection((prev) => prev + ' hovered');
+					break;
+				case 'In Progress':
+					if (!inProgressSection.includes('hovered')) setInProgressSection((prev) => prev + ' hovered');
+					break;
+				case 'Done':
+					if (!doneSection.includes('hovered')) setDoneSection((prev) => prev + ' hovered');
+					break;
+				case 'Others':
+					if (!othersSection.includes('hovered')) setOthersSection((prev) => prev + ' hovered');
+					break;
+				default:
+					break;
+			}
+		}
+	};
+
+	const handleDragLeave = (sectionName) => {
+		switch (sectionName) {
+			case 'Not Started':
+				setNotStartedSection('section');
+				break;
+			case 'In Progress':
+				setInProgressSection('section');
+				break;
+			case 'Done':
+				setDoneSection('section');
+				break;
+			case 'Others':
+				setOthersSection('section');
+				break;
+			default:
+				break;
+		}
+	};
+
+	const handleDrop = (sectionId) => {
+		setNotStartedSection('section');
+		setItemIDTo(sectionId);
+
+		setNotStartedSection('section');
+		setInProgressSection('section');
+		setDoneSection('section');
+		setOthersSection('section');
+	};
+
+	// Controller/Util functions
 	evaluateClass.current = () => {
 		let fromItem;
 
 		if (itemIDFrom && itemIDTo && itemIDFrom !== itemIDTo) {
+			// Remove the item from list
 			switch (itemIDFrom) {
 				case 'Not Started':
 					fromItem = notStartedList.filter((item) => item.id === itemID);
-					setNotStartedList(
-						notStartedList.filter((item) => item.id !== itemID)
-					);
+					setNotStartedList(notStartedList.filter((item) => item.id !== itemID));
 					break;
 				case 'In Progress':
 					fromItem = inProgressList.filter((item) => item.id === itemID);
-					setInProgressList(
-						inProgressList.filter((item) => item.id !== itemID)
-					);
+					setInProgressList(inProgressList.filter((item) => item.id !== itemID));
 					break;
 				case 'Done':
 					fromItem = doneList.filter((item) => item.id === itemID);
@@ -89,6 +112,7 @@ export default function DragDropContainer() {
 					break;
 			}
 
+			// add the item to new list
 			switch (itemIDTo) {
 				case 'Not Started':
 					setNotStartedList((prev) => [...prev, ...fromItem]);
@@ -106,92 +130,57 @@ export default function DragDropContainer() {
 					break;
 			}
 
-			setItemID(null);
-			setItemIDFrom(null);
-			setItemIDTo(null);
+			clearDraggedItem();
 		}
 	};
 
-	const handleDragStart = (id, fr) => {
-		setItemID(id);
-		setItemIDFrom(fr);
+	const clearDraggedItem = () => {
+		setItemID(null);
+		setItemIDFrom(null);
+		setItemIDTo(null);
 	};
 
-	const handleDragOver = (evt) => {
-		evt.preventDefault();
+	const itemsMapper = (sectionName) => {
+		let itemList = [];
+		let sectionClassNameStates = 'section';
 
-		switch (evt.target.id) {
+		switch (sectionName) {
 			case 'Not Started':
-				if (!notStartedSection.includes('hovered'))
-					setNotStartedSection((prev) => prev + ' hovered');
+				itemList = notStartedList;
+				sectionClassNameStates = notStartedSection;
 				break;
 			case 'In Progress':
-				if (!inProgressSection.includes('hovered'))
-					setInProgressSection((prev) => prev + ' hovered');
+				itemList = inProgressList;
+				sectionClassNameStates = inProgressSection;
 				break;
 			case 'Done':
-				if (!doneSection.includes('hovered'))
-					setDoneSection((prev) => prev + ' hovered');
+				itemList = doneList;
+				sectionClassNameStates = doneSection;
 				break;
 			case 'Others':
-				if (!othersSection.includes('hovered'))
-					setOthersSection((prev) => prev + ' hovered');
+				itemList = othersList;
+				sectionClassNameStates = othersSection;
 				break;
 			default:
 				break;
 		}
+
+		return [itemList, sectionClassNameStates];
 	};
 
-	const handleDragLeave = (evt) => {
-		switch (evt.target.id) {
-			case 'Not Started':
-				setNotStartedSection('list');
-				break;
-			case 'In Progress':
-				setInProgressSection('list');
-				break;
-			case 'Done':
-				setDoneSection('list');
-				break;
-			case 'Others':
-				setOthersSection('list');
-				break;
-			default:
-				break;
-		}
-	};
-
-	const handleDrop = (evt) => {
-		setNotStartedSection('list');
-		setItemIDTo(evt.target.id);
-
-		setNotStartedSection('list');
-		setInProgressSection('list');
-		setDoneSection('list');
-		setOthersSection('list');
-	};
-
+	// Hooks
 	useEffect(() => {
 		evaluateClass.current();
-	}, [itemID, itemIDTo, itemIDFrom]);
+	}, [itemIDTo]);
 
 	return (
-		<div className='drag-drop-container'>
+		<div className='dragdrop-container'>
 			<header>
-				<h2>Task Status</h2>
+				<h2>{title}</h2>
 			</header>
-			<div className='lists'>
-				{sections.map(({ name, items }) => {
-					const sectionClassNameStates =
-						name === 'Not Started'
-							? notStartedSection
-							: name === 'In Progress'
-							? inProgressSection
-							: name === 'Done'
-							? doneSection
-							: name === 'Others'
-							? othersSection
-							: 'list';
+			<div className='sections'>
+				{sections.map(({ name }) => {
+					const [itemList, sectionClassNameStates] = itemsMapper(name);
 					const actionHandlers = {
 						sectionClassNameStates,
 						handleDragOver,
@@ -199,14 +188,8 @@ export default function DragDropContainer() {
 						handleDragLeave,
 						handleDrop,
 					};
-					return (
-						<DragAndDropSection
-							key={name}
-							name={name}
-							handlers={actionHandlers}
-							items={items}
-						/>
-					);
+
+					return <DragAndDropSection key={name} name={name} handlers={actionHandlers} items={itemList} />;
 				})}
 			</div>
 		</div>
