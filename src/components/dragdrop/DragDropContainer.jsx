@@ -1,196 +1,39 @@
 import './dragdropStyles.css';
-import { useEffect, useState, useRef } from 'react';
-import DragAndDropSection from './DragDropSection';
+import { useSelector } from 'react-redux';
+import { DragAndDropSection } from './DragDropSection';
+import { NewItemCard } from './NewItemCard';
+// custom hook
+import { useDragDrop } from '../../hooks/useDragDrop';
 
-export default function DragDropContainer({ title, sections, data }) {
-	const notStarted = data.filter((item) => item.section === 'Not Started');
-	const inProgress = data.filter((item) => item.section === 'In Progress');
-	const done = data.filter((item) => item.section === 'Done');
-	const others = data.filter((item) => item.section === 'Others');
-	// dragged item states
-	const [itemID, setItemID] = useState(null);
-	const [itemIDFrom, setItemIDFrom] = useState(null);
-	const [itemIDTo, setItemIDTo] = useState(null);
-	// list item states
-	const [notStartedList, setNotStartedList] = useState(notStarted);
-	const [inProgressList, setInProgressList] = useState(inProgress);
-	const [doneList, setDoneList] = useState(done);
-	const [othersList, setOthersList] = useState(others);
-	// list item styles states
-	const [notStartedSection, setNotStartedSection] = useState('section');
-	const [inProgressSection, setInProgressSection] = useState('section');
-	const [doneSection, setDoneSection] = useState('section');
-	const [othersSection, setOthersSection] = useState('section');
+export default function DragDropContainer() {
+	const { title, sections, cards } = useSelector((state) => state.board);
 
-	let evaluateClass = useRef(null);
-
-	// Action Handlers
-	const handleDragStart = (id, fr) => {
-		// clear the previous dragged item states before starting a new one
-		clearDraggedItem();
-		// capture new dragged item id
-		setItemID(id);
-		setItemIDFrom(fr);
-	};
-
-	const handleDragOver = (evt, sectionID) => {
-		evt.preventDefault();
-
-		if (sectionID !== itemIDFrom) {
-			switch (sectionID) {
-				case 'Not Started':
-					if (!notStartedSection.includes('hovered')) setNotStartedSection((prev) => prev + ' hovered');
-					break;
-				case 'In Progress':
-					if (!inProgressSection.includes('hovered')) setInProgressSection((prev) => prev + ' hovered');
-					break;
-				case 'Done':
-					if (!doneSection.includes('hovered')) setDoneSection((prev) => prev + ' hovered');
-					break;
-				case 'Others':
-					if (!othersSection.includes('hovered')) setOthersSection((prev) => prev + ' hovered');
-					break;
-				default:
-					break;
-			}
-		}
-	};
-
-	const handleDragLeave = (sectionName) => {
-		switch (sectionName) {
-			case 'Not Started':
-				setNotStartedSection('section');
-				break;
-			case 'In Progress':
-				setInProgressSection('section');
-				break;
-			case 'Done':
-				setDoneSection('section');
-				break;
-			case 'Others':
-				setOthersSection('section');
-				break;
-			default:
-				break;
-		}
-	};
-
-	const handleDrop = (sectionId) => {
-		setNotStartedSection('section');
-		setItemIDTo(sectionId);
-
-		setNotStartedSection('section');
-		setInProgressSection('section');
-		setDoneSection('section');
-		setOthersSection('section');
-	};
-
-	// Controller/Util functions
-	evaluateClass.current = () => {
-		let fromItem;
-
-		if (itemIDFrom && itemIDTo && itemIDFrom !== itemIDTo) {
-			// Remove the item from list
-			switch (itemIDFrom) {
-				case 'Not Started':
-					fromItem = notStartedList.filter((item) => item.id === itemID);
-					setNotStartedList(notStartedList.filter((item) => item.id !== itemID));
-					break;
-				case 'In Progress':
-					fromItem = inProgressList.filter((item) => item.id === itemID);
-					setInProgressList(inProgressList.filter((item) => item.id !== itemID));
-					break;
-				case 'Done':
-					fromItem = doneList.filter((item) => item.id === itemID);
-					setDoneList(doneList.filter((item) => item.id !== itemID));
-					break;
-				case 'Others':
-					fromItem = othersList.filter((item) => item.id === itemID);
-					setOthersList(othersList.filter((item) => item.id !== itemID));
-					break;
-				default:
-					break;
-			}
-
-			// add the item to new list
-			switch (itemIDTo) {
-				case 'Not Started':
-					setNotStartedList((prev) => [...prev, ...fromItem]);
-					break;
-				case 'In Progress':
-					setInProgressList((prev) => [...prev, ...fromItem]);
-					break;
-				case 'Done':
-					setDoneList((prev) => [...prev, ...fromItem]);
-					break;
-				case 'Others':
-					setOthersList((prev) => [...prev, ...fromItem]);
-					break;
-				default:
-					break;
-			}
-
-			clearDraggedItem();
-		}
-	};
-
-	const clearDraggedItem = () => {
-		setItemID(null);
-		setItemIDFrom(null);
-		setItemIDTo(null);
-	};
-
-	const itemsMapper = (sectionName) => {
-		let itemList = [];
-		let sectionClassNameStates = 'section';
-
-		switch (sectionName) {
-			case 'Not Started':
-				itemList = notStartedList;
-				sectionClassNameStates = notStartedSection;
-				break;
-			case 'In Progress':
-				itemList = inProgressList;
-				sectionClassNameStates = inProgressSection;
-				break;
-			case 'Done':
-				itemList = doneList;
-				sectionClassNameStates = doneSection;
-				break;
-			case 'Others':
-				itemList = othersList;
-				sectionClassNameStates = othersSection;
-				break;
-			default:
-				break;
-		}
-
-		return [itemList, sectionClassNameStates];
-	};
-
-	// Hooks
-	useEffect(() => {
-		evaluateClass.current();
-	}, [itemIDTo]);
+	const mappedSections = useDragDrop(sections, cards);
 
 	return (
-		<div className='dragdrop-container'>
+		<div
+			className='dragdrop-container'
+			// TODO: ability to change background image by the user
+			style={{
+				backgroundImage:
+					'url(https://images.unsplash.com/photo-1614199238405-741b10b6e5af?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=80)',
+			}}>
 			<header>
-				<h2>{title}</h2>
+				<h3 className='board-titles'>{title}</h3>
+				<span className='board-titles'>Personal</span>
+				<span className='board-titles'>Private</span>
 			</header>
 			<div className='sections'>
-				{sections.map(({ name }) => {
-					const [itemList, sectionClassNameStates] = itemsMapper(name);
-					const actionHandlers = {
-						sectionClassNameStates,
-						handleDragOver,
-						handleDragStart,
-						handleDragLeave,
-						handleDrop,
-					};
-
-					return <DragAndDropSection key={name} name={name} handlers={actionHandlers} items={itemList} />;
-				})}
+				{mappedSections &&
+					mappedSections.map(({ section, handlers, lists }) => (
+						<DragAndDropSection key={section} name={section} handlers={handlers} items={lists} />
+					))}
+				<NewItemCard
+					variant='input'
+					placeHolder='Enter section title...'
+					composerButtonLabel={`Add ${sections.length > 0 ? 'another' : 'new'} section`}
+					buttonLabel='Add section'
+				/>
 			</div>
 		</div>
 	);

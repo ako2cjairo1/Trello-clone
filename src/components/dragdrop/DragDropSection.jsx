@@ -1,47 +1,47 @@
-import { memo, useState } from 'react';
-import DragDropItem from './DragDropItem';
-import NewItemCard from './NewItemCard';
+import { memo, useRef } from 'react';
+import { DragDropItem } from './DragDropItem';
+import { NewItemCard } from './NewItemCard';
 
-function DragAndDropSection({
-	name,
-	handlers: { sectionClassNameStates, handleDragOver, handleDragStart, handleDragLeave, handleDrop },
-	items,
-}) {
-	const [showNewItemForm, setShowNewItemForm] = useState(false);
-	const onDragOver = (e) => handleDragOver(e, name);
-	const onDragLeave = () => handleDragLeave(name);
-	const onDrop = () => handleDrop(name);
+export const DragAndDropSection = memo(
+	({ name, handlers: { sectionClassName, handleDragOver, handleDragStart, handleDragLeave, handleDrop }, items }) => {
+		const onDragOver = (e) => handleDragOver(e, name);
+		const onDragLeave = () => handleDragLeave(name);
+		const onDrop = () => handleDrop(name);
+		const endCardRef = useRef(null);
 
-	return (
-		<div id={name} className='section-container' onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
-			<div id={name} className={sectionClassNameStates} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
-				<div className='section-header'>
-					<h4 className='header'>{name}</h4>
-					<div className='section-header-extras'>
-						<span>⋮</span>
+		return (
+			<div id={name} className='section-wrapper' onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
+				<div id={name} className={sectionClassName} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
+					<div className='section-header'>
+						<h4 className='header'>{name}</h4>
+						<div className='section-header-extras'>
+							<span>⋮</span>
+						</div>
 					</div>
-				</div>
-				{items.map(({ id, text }) => (
-					<DragDropItem
-						key={id}
-						text={text}
-						dragOver={onDragOver}
-						dragLeave={onDragLeave}
-						drop={onDrop}
-						handleDragStart={() => handleDragStart(id, name)}
+					<div className='section-container'>
+						{items &&
+							items.map(({ id, text }) => (
+								<DragDropItem
+									key={id}
+									text={text}
+									dragOver={onDragOver}
+									dragLeave={onDragLeave}
+									drop={onDrop}
+									handleDragStart={() => handleDragStart(id, name)}
+								/>
+							))}
+						<div ref={endCardRef} />
+					</div>
+					<NewItemCard
+						section={name}
+						variant='textarea'
+						placeHolder='Enter a title for this card...'
+						composerButtonLabel='Add a new card'
+						buttonLabel='Add card'
+						scrollDown={() => endCardRef.current.scrollIntoView({ behavior: 'smooth' })}
 					/>
-				))}
-				{!showNewItemForm ? (
-					<div className='footer' onClick={() => setShowNewItemForm(true)}>
-						<span>+</span>
-						<p>Add new item</p>
-					</div>
-				) : (
-					<NewItemCard close={() => setShowNewItemForm(false)} save={() => alert('TODO: implement save func.')} />
-				)}
+				</div>
 			</div>
-		</div>
-	);
-}
-
-export default memo(DragAndDropSection);
+		);
+	}
+);
