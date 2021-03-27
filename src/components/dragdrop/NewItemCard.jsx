@@ -2,7 +2,7 @@ import { memo, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { addSection, addCard } from '../../redux/dragdrop/actions';
 
-export const NewItemCard = memo(({ section, variant, placeHolder, composerButtonLabel, buttonLabel, scrollDown }) => {
+export const NewItemCard = memo(({ sectionID, variant, placeHolder, composerButtonLabel, buttonLabel, scrollDown }) => {
 	const [close, setClose] = useState(false);
 	const [sectionName, setSectionName] = useState('');
 	const [cardName, setCardName] = useState('');
@@ -30,7 +30,7 @@ export const NewItemCard = memo(({ section, variant, placeHolder, composerButton
 			if (variant === 'input') {
 				dispatch(addSection(sectionName));
 			} else {
-				dispatch(addCard(cardName, section));
+				dispatch(addCard(cardName, sectionID));
 			}
 			handleClose();
 		}
@@ -53,7 +53,7 @@ export const NewItemCard = memo(({ section, variant, placeHolder, composerButton
 	};
 
 	return (
-		<div className={variant === 'input' ? `section ${!close && 'transparent'}` : null}>
+		<div className={variant === 'input' ? `section ${!close && 'transparent'}` : close ? 'mt-5' : 'mt-10'}>
 			{!close ? (
 				<div className={`card-section-composer ${variant === 'input' && 'color-white'}`} onClick={handleOnOpen}>
 					<span>+</span>

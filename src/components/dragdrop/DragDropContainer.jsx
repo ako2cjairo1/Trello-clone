@@ -19,14 +19,19 @@ export default function DragDropContainer() {
 					'url(https://images.unsplash.com/photo-1614199238405-741b10b6e5af?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=80)',
 			}}>
 			<header>
-				<h3 className='board-titles'>{title}</h3>
-				<span className='board-titles'>Personal</span>
-				<span className='board-titles'>Private</span>
+				<div className='left'>
+					<span className='board-menu padding-inline'>𓃑</span>
+					<h3 className='board-menu'>{title}</h3>
+				</div>
+				<div className='right'>
+					<span className='board-menu lg'>+</span>
+					<span className='board-menu padding-inline'>🔔</span>
+				</div>
 			</header>
 			<div className='sections'>
 				{mappedSections &&
 					mappedSections.map(({ section, handlers, lists }) => (
-						<DragAndDropSection key={section} name={section} handlers={handlers} items={lists} />
+						<DragAndDropSection key={section.id} section={section} handlers={handlers} items={lists} />
 					))}
 				<NewItemCard
 					variant='input'

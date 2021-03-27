@@ -12,8 +12,8 @@ function useDragDrop(sections, cards) {
 	const [sectionClasses, setSectionClasses] = useState(sectionClassNameState);
 	// dragged item states
 	const [cardId, setCardId] = useState();
-	const [sectionNameFrom, setSectionNameFrom] = useState();
-	const [sectionNameTo, setSectionNameTo] = useState();
+	const [secIdFrom, setSecIdFrom] = useState();
+	const [secIdTo, setSecIdTo] = useState();
 
 	// Action Handlers
 	const handleDragStart = (id, fr) => {
@@ -21,52 +21,52 @@ function useDragDrop(sections, cards) {
 		clearDraggedItem();
 		// capture new dragged item id
 		setCardId(id);
-		setSectionNameFrom(fr);
+		setSecIdFrom(fr);
 	};
 
-	const handleDrop = (sectionId) => setSectionNameTo(sectionId);
+	const handleDrop = (sectionId) => setSecIdTo(sectionId);
 
-	const handleDragOver = (evt, sectionName) => {
+	const handleDragOver = (evt, secID) => {
 		evt.preventDefault();
 
-		if (sectionName !== sectionNameFrom) {
-			sections.forEach(({ name }) => {
-				if (sectionName === name) {
-					if (!sectionClasses[name].includes('hovered')) {
+		if (secID !== secIdFrom) {
+			sections.forEach(({ id }) => {
+				if (secID === id) {
+					if (!sectionClasses[id].includes('hovered')) {
 						// append 'hovered' class name
-						setSectionClasses((prevClass) => ({ ...prevClass, [name]: prevClass[name] + ' hovered' }));
+						setSectionClasses((prevClass) => ({ ...prevClass, [id]: prevClass[id] + ' hovered' }));
 					}
 				}
 			});
 		}
 	};
 
-	const handleDragLeave = (sectionName) => {
-		sections.forEach(({ name }) => {
-			if (sectionName === name) {
+	const handleDragLeave = (secID) => {
+		sections.forEach(({ id }) => {
+			if (secID === id) {
 				// remove 'hovered' class name
-				setSectionClasses((prevClass) => ({ ...prevClass, [name]: 'section' }));
+				setSectionClasses((prevClass) => ({ ...prevClass, [id]: 'section' }));
 			}
 		});
 	};
 
 	const clearDraggedItem = () => {
 		setCardId(null);
-		setSectionNameFrom(null);
-		setSectionNameTo(null);
+		setSecIdFrom(null);
+		setSecIdTo(null);
 	};
 
 	initSections.current = () => {
-		sections.forEach(({ name }) => {
-			sectionClassNameState = { ...sectionClassNameState, [name]: 'section' };
+		sections.forEach(({ id }) => {
+			sectionClassNameState = { ...sectionClassNameState, [id]: 'section' };
 		});
 		setSectionClasses(sectionClassNameState);
 	};
 
 	cardMoved.current = () => {
-		if (sectionNameFrom && sectionNameTo && sectionNameFrom !== sectionNameTo) {
+		if (secIdFrom && secIdTo && secIdFrom !== secIdTo) {
 			// move card to new section
-			dispatch(moveCard(cardId, sectionNameTo));
+			dispatch(moveCard(cardId, secIdTo));
 			// clear the state of dragged item
 			clearDraggedItem();
 		}
@@ -75,25 +75,27 @@ function useDragDrop(sections, cards) {
 	useEffect(() => {
 		initSections.current();
 		cardMoved.current();
-	}, [sections, sectionNameTo]);
+	}, [sections, secIdTo]);
 
 	// build the object mapping of sections with associated card items and action handlers
-	const mappedSections = sections.map(({ name }) => {
-		const cardsList = cards.filter((cards) => cards.section === name);
-		const sectionClassName = sectionClasses[name];
-		const actionHandlers = {
-			sectionClassName,
-			handleDragOver,
-			handleDragStart,
-			handleDragLeave,
-			handleDrop,
-		};
-		return {
-			section: name,
-			handlers: actionHandlers,
-			lists: cardsList,
-		};
-	});
+	const mappedSections = sections
+		.sort((x, y) => (x.index > y.index ? 1 : -1))
+		.map(({ id, name }) => {
+			const cardsList = cards.filter((cards) => cards.section === id);
+			const sectionClassName = sectionClasses[id];
+			const actionHandlers = {
+				sectionClassName,
+				handleDragOver,
+				handleDragStart,
+				handleDragLeave,
+				handleDrop,
+			};
+			return {
+				section: { id, name },
+				handlers: actionHandlers,
+				lists: cardsList,
+			};
+		});
 
 	return mappedSections;
 }
