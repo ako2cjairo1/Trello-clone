@@ -72,7 +72,23 @@
 	cursor: pointer;
 	color: #fff;
 	border-radius: var(--border-radius);
-	background: linear-gradient(180deg, rgba(0, 0, 0, 0.24) 0, rgba(0, 0, 0, 0.24) 48px, transparent 80px, transparent);
+	background: linear-gradient(
+		180deg,
+		rgba(0, 0, 0, 0.24) 0,
+		rgba(0, 0, 0, 0.24) 48px,
+		transparent 80px,
+		transparent
+	);
+	transition: var(--transition);
+}
+.board-menu:hover {
+	/* background-color: hsla(0, 0%, 100%, 0.24);
+	color: var(--color);
+	transition: var(--transition); */
+	background: none;
+	color: var(--color);
+	background-color: #ebecf0;
+	transition: var(--transition);
 }
 .padding-inline {
 	color: #fff;
@@ -218,14 +234,9 @@ header {
 
 .card-section-composer {
 	display: flex;
-	align-items: center;
 	padding-right: 10px;
-	width: fit-content;
 	cursor: pointer;
-	height: 25px;
-	border-radius: 18px;
 	color: #5e6c84;
-	border: 1px transparent solid;
 	transition: var(--transition);
 }
 .card-section-composer span {
@@ -233,16 +244,9 @@ header {
 	font-weight: 300;
 	padding-inline: 8px;
 }
-.color-white {
-	color: #fff;
+.color-invert {
+	color: inherit;
 }
-.card-section-composer:hover {
-	background-color: lightgray;
-	color: var(--color);
-	border: 1px #6b778c solid;
-	transition: var(--transition);
-}
-
 .new-item-textarea {
 	min-height: 60px;
 	max-height: 200px;
@@ -295,8 +299,23 @@ header {
 	transition: var(--transition);
 }
 
-.transparent {
-	background: linear-gradient(180deg, rgba(0, 0, 0, 0.24) 0, rgba(0, 0, 0, 0.24) 48px, transparent 80px, transparent);
+.section.transparent {
+	color: #fff;
+	background: linear-gradient(
+		180deg,
+		rgba(0, 0, 0, 0.24) 0,
+		rgba(0, 0, 0, 0.24) 48px,
+		transparent 80px,
+		transparent
+	);
+	transition: var(--transition);
+}
+
+.section.transparent:hover {
+	background: none;
+	color: var(--color);
+	background-color: #ebecf0;
+	transition: var(--transition);
 }
 
 .add-card-actions {

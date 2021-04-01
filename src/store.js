@@ -2,12 +2,9 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import rootReducer from './redux/rootReducer';
+import { board } from './redux/initialState';
 
-import { cards, sections } from './data/sample';
-
-const initialState = {
-	board: { title: 'Task Status', sections, cards },
-};
+const initialState = { board };
 
 // gather middlewares
 const middlewares = [thunk];

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import dragDropReducer from './dragdrop/reducer';
+import { dragDropReducer } from './dragdrop';
 
 export default combineReducers({
 	board: dragDropReducer,

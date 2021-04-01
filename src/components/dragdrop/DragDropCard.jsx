@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
 
-export const DragDropItem = memo(({ text, handleDragStart, dragOver, dragLeave, drop }) => {
+export const DragDropCard = memo(({ text, handleDragStart, dragOver, dragLeave, drop }) => {
 	const [itemClass, setItemClass] = useState('section-item');
 	const [editClass, setEditClass] = useState('edit');
 
