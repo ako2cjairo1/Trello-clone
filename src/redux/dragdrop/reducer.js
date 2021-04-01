@@ -1,76 +1,91 @@
-import { v4 as uuid } from 'uuid';
-import { ADD_SECTION, UPDATE_SECTION, ADD_CARD, UPDATE_CARD, MOVE_CARD } from './actions';
+import { board } from '../initialState';
+import { ActionType } from './actions';
 
-const initialState = {
-	title: '',
-	sections: [],
-	cards: [],
-};
-
-export default function dragDropReducer(state = initialState, action) {
-	let cards = [];
+export function dragDropReducer(state = board, action) {
+	// console.log('-----REDUCER-----');
 	switch (action.type) {
-		case ADD_SECTION:
-			const newSection = {
-				id: uuid(),
-				index: state.sections.length + 1,
-				name: action.sectionName,
-			};
-
+		case ActionType.UPDATE_CURRENT_BOARD:
+			const selectedBoard = action.payload;
 			return {
 				...state,
-				sections: [...state.sections, newSection],
+				currentBoard: { ...selectedBoard },
 			};
 
-		case UPDATE_SECTION:
-			// filter out the section to be updated
-			const sections = state.sections.filter((section) => section.id !== action.payload.id);
-			// get the section to be updated
-			let updatedSection = state.sections.find((section) => section.id === action.payload.id);
-			// set the new name
-			updatedSection = { ...updatedSection, name: action.payload.sectionName };
-
+		case ActionType.ADD_SECTION:
+			const addedSection = action.payload;
 			return {
 				...state,
-				sections: [...sections, updatedSection],
+				sections: [...state.sections, ...addedSection],
 			};
 
-		case ADD_CARD:
-			const newCard = {
-				id: uuid(),
-				text: action.payload.text,
-				section: action.payload.sectionName,
-			};
-
+		case ActionType.UPDATE_SECTION:
+			const updatedSection = action.payload;
+			// make a copy of sections and replace with updated copy of section record
+			// to maintain the record index in array.
+			const sectionUpdates = state.sections.map((section) => {
+				if (section.id === updatedSection.id) {
+					return updatedSection;
+				} else {
+					return section;
+				}
+			});
 			return {
 				...state,
-				cards: [...state.cards, newCard],
+				sections: sectionUpdates,
 			};
 
-		case UPDATE_CARD:
+		case ActionType.ADD_CARD:
+			const addedCard = action.payload;
+			return {
+				...state,
+				cards: [...state.cards, ...addedCard],
+			};
+
+		case ActionType.UPDATE_CARD:
+			const updatedCard = action.payload;
 			// filter out the card item to be updated
-			cards = state.cards.filter((card) => card.id !== action.payload.cardId);
-			// get the card item to be updated
-			let updatedCards = state.cards.find((card) => card.id === action.payload.cardId);
-			// set the new text value
-			updatedCards = { ...updatedCards, text: action.payload.text };
-
+			const removedCards = state.cards.filter((card) => card.id !== updatedCard.id);
 			return {
 				...state,
-				cards: [...cards, updatedCards],
+				cards: [...removedCards, updatedCard],
 			};
 
-		case MOVE_CARD:
+		case ActionType.MOVE_CARD:
+			const movedCard = action.payload;
 			// filter out the card item to be moved
-			cards = state.cards.filter((card) => card.id !== action.payload.cardId);
-			// get the card item to be moved
-			let movingCard = state.cards.find((card) => card.id === action.payload.cardId);
-			// set the new section name
-			movingCard = { ...movingCard, section: action.payload.toSection };
-
+			const removeCard = state.cards.filter((card) => card.id !== movedCard.id);
 			return {
 				...state,
-				cards: [...cards, movingCard],
+				cards: [...removeCard, movedCard],
+			};
+
+		case ActionType.IS_LOADING:
+			return {
+				...state,
+				isLoading: action.isLoading,
+			};
+
+		case ActionType.UPDATE_ERROR:
+			return {
+				...state,
+				error: action.error,
+			};
+
+		case ActionType.FETCH_BOARDS:
+			const {
+				boards: fetchedBoards,
+				sections: fetchedSections,
+				cards: fetchedCards,
+			} = action.payload;
+			return {
+				...state,
+				boards: fetchedBoards,
+				sections: fetchedSections,
+				cards: fetchedCards,
+				// boards: state.boards.length > 0 ? [...state.boards, ...fetchedBoards] : fetchedBoards,
+				// sections:
+				// 	state.sections.length > 0 ? [...state.sections, ...fetchedSections] : fetchedSections,
+				// cards: state.cards.length > 0 ? [...state.cards, ...fetchedCards] : fetchedCards,
 			};
 
 		default:

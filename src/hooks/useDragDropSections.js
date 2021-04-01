@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+// Controllers
+import { moveCardController } from '../controllers';
 
-// actions
-import { moveCard } from '../redux/dragdrop/actions';
-
-function useDragDrop(sections, cards) {
+function useDragDropSections(sections) {
 	const dispatch = useDispatch();
-	let initSections = useRef({});
-	let cardMoved = useRef(null);
+	let fnInitSections = useRef({});
+	let fnCardMoved = useRef(null);
 	let sectionClassNameState = {};
+
+	// local state variables
 	const [sectionClasses, setSectionClasses] = useState(sectionClassNameState);
 	// dragged item states
 	const [cardId, setCardId] = useState();
@@ -34,7 +35,10 @@ function useDragDrop(sections, cards) {
 				if (secID === id) {
 					if (!sectionClasses[id].includes('hovered')) {
 						// append 'hovered' class name
-						setSectionClasses((prevClass) => ({ ...prevClass, [id]: prevClass[id] + ' hovered' }));
+						setSectionClasses((prevClass) => ({
+							...prevClass,
+							[id]: prevClass[id] + ' hovered',
+						}));
 					}
 				}
 			});
@@ -56,32 +60,33 @@ function useDragDrop(sections, cards) {
 		setSecIdTo(null);
 	};
 
-	initSections.current = () => {
+	fnInitSections.current = () => {
 		sections.forEach(({ id }) => {
 			sectionClassNameState = { ...sectionClassNameState, [id]: 'section' };
 		});
 		setSectionClasses(sectionClassNameState);
 	};
 
-	cardMoved.current = () => {
+	fnCardMoved.current = () => {
 		if (secIdFrom && secIdTo && secIdFrom !== secIdTo) {
 			// move card to new section
-			dispatch(moveCard(cardId, secIdTo));
+			dispatch(moveCardController({ id: cardId, section: secIdTo }));
 			// clear the state of dragged item
 			clearDraggedItem();
 		}
 	};
 
 	useEffect(() => {
-		initSections.current();
-		cardMoved.current();
+		if (sections) {
+			fnInitSections.current();
+			fnCardMoved.current();
+		}
 	}, [sections, secIdTo]);
 
-	// build the object mapping of sections with associated card items and action handlers
-	const mappedSections = sections
-		.sort((x, y) => (x.index > y.index ? 1 : -1))
-		.map(({ id, name }) => {
-			const cardsList = cards.filter((cards) => cards.section === id);
+	// build the object mapping of sections with associated action handlers
+	const mappedBoard =
+		sections &&
+		sections.map(({ id, name }) => {
 			const sectionClassName = sectionClasses[id];
 			const actionHandlers = {
 				sectionClassName,
@@ -90,14 +95,14 @@ function useDragDrop(sections, cards) {
 				handleDragLeave,
 				handleDrop,
 			};
+
 			return {
 				section: { id, name },
 				handlers: actionHandlers,
-				lists: cardsList,
 			};
 		});
 
-	return mappedSections;
+	return mappedBoard;
 }
 
-export { useDragDrop };
+export { useDragDropSections };
