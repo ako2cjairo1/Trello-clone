@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { DragDropCard, DragDropNewItem } from './';
 // Controllers
-import { updateSectionController } from '../../controllers';
+import { updateSectionController, createCardController } from '../../controllers';
 
 export const DragDropSection = ({
 	section: { id: sectionID, name },
@@ -32,6 +32,8 @@ export const DragDropSection = ({
 		}
 		setIsEditing(false);
 	};
+	const onSaveNewCard = (newCard) =>
+		dispatch(createCardController({ section: sectionID, text: newCard }));
 
 	// Local Event handlers
 	const onKeyUp_UpdateSectionName = (evt) =>
@@ -70,16 +72,16 @@ export const DragDropSection = ({
 				</div>
 				<div className='section-container'>
 					{cards &&
-						cards.map(({ id, section, text }) => {
-							if (section === sectionID) {
+						cards.map((card) => {
+							if (card.section === sectionID) {
 								return (
 									<DragDropCard
-										key={id}
-										text={text}
+										key={card.id}
+										card={{ ...card, sectionName: name }}
 										dragOver={onDragOver}
 										dragLeave={onDragLeave}
 										drop={onDrop}
-										handleDragStart={() => handleDragStart(id, sectionID)}
+										handleDragStart={() => handleDragStart(card.id, sectionID)}
 									/>
 								);
 							}
@@ -94,6 +96,7 @@ export const DragDropSection = ({
 					composerButtonLabel='Add a new card'
 					buttonLabel='Add card'
 					scrollDown={() => endCardRef.current.scrollIntoView({ behavior: 'smooth' })}
+					onSaveCallback={onSaveNewCard}
 				/>
 			</div>
 		</div>

@@ -3,11 +3,14 @@ import { useDispatch } from 'react-redux';
 // Controllers
 import { moveCardController } from '../controllers';
 
-function useDragDropSections(sections) {
+function useDragDropSections(sections, currentBoard) {
 	const dispatch = useDispatch();
 	let fnInitSections = useRef({});
 	let fnCardMoved = useRef(null);
 	let sectionClassNameState = {};
+
+	const currentSections =
+		sections && sections.filter((section) => section.board === currentBoard.id);
 
 	// local state variables
 	const [sectionClasses, setSectionClasses] = useState(sectionClassNameState);
@@ -85,8 +88,8 @@ function useDragDropSections(sections) {
 
 	// build the object mapping of sections with associated action handlers
 	const mappedBoard =
-		sections &&
-		sections.map(({ id, name }) => {
+		currentSections &&
+		currentSections.map(({ id, name }) => {
 			const sectionClassName = sectionClasses[id];
 			const actionHandlers = {
 				sectionClassName,

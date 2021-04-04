@@ -7,7 +7,7 @@
 	height: 100%;
 	padding: 0px 10px;
 	background: transparent;
-	z-index: 1;
+	z-index: 99;
 	cursor: wait;
 	animation: bg 1.4s cubic-bezier(0, 0.2, 0.8, 1);
 }

@@ -2,7 +2,6 @@ import { board } from '../initialState';
 import { ActionType } from './actions';
 
 export function dragDropReducer(state = board, action) {
-	// console.log('-----REDUCER-----');
 	switch (action.type) {
 		case ActionType.UPDATE_CURRENT_BOARD:
 			const selectedBoard = action.payload;

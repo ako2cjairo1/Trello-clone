@@ -1,4 +1,5 @@
 import './dragdropStyles.css';
+import { IoAppsSharp, IoAddOutline, IoNotificationsOutline } from 'react-icons/io5';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DragDropSection, DragDropBoardButtons } from './';
@@ -7,26 +8,22 @@ import { Spinner } from '../shared';
 // custom hook
 import { useDragDropSections } from '../../hooks';
 // actions
-import { fetchBoardsController, getCurrentBoardController } from '../../controllers';
+import { fetchBoardsController, createSectionController } from '../../controllers';
 
 export function DragDropContainer() {
+	const dispatch = useDispatch();
 	// select global states
 	const { isLoading, error, boards, sections, currentBoard } = useSelector((state) => state.board);
-	// map the boards, section and cards
-	const mappedSections = useDragDropSections(currentBoard && sections && sections);
 
-	const dispatch = useDispatch();
+	// map the sections
+	const mappedSections = useDragDropSections(currentBoard && sections, currentBoard);
+
+	const onSaveNewSection = (newSection) =>
+		dispatch(createSectionController({ board: currentBoard.id, name: newSection }));
+
 	useEffect(() => {
-		console.log('Fetching...');
 		dispatch(fetchBoardsController());
 	}, [dispatch]);
-
-	useEffect(() => {
-		// select the first Board in list if nothing have set currently.
-		if (!currentBoard && boards[0]) {
-			dispatch(getCurrentBoardController(boards[0]));
-		}
-	}, [boards, dispatch, currentBoard]);
 
 	return (
 		<div
@@ -40,12 +37,18 @@ export function DragDropContainer() {
 			{error && <h3>Error: {error}</h3>}
 			<header>
 				<div className='left'>
-					<span className='board-menu padding-inline'>𓃑</span>
-					{boards && <DragDropBoardButtons boards={boards} />}
+					<div className='board-menu padding-inline'>
+						<IoAppsSharp className='lg' />
+					</div>
+					{boards && <DragDropBoardButtons boards={boards} currentBoard={currentBoard} />}
 				</div>
 				<div className='right'>
-					<span className='board-menu lg'>+</span>
-					<span className='board-menu padding-inline'>🔔</span>
+					<div className='board-menu'>
+						<IoAddOutline className='xlg' />
+					</div>
+					<div className='board-menu padding-inline'>
+						<IoNotificationsOutline className='lg' />
+					</div>
 				</div>
 			</header>
 			{isLoading && <div className='backdrop'></div>}
@@ -60,8 +63,9 @@ export function DragDropContainer() {
 						<DragDropNewItem
 							variant='input'
 							placeHolder='Enter section title...'
-							composerButtonLabel={`Add ${sections && sections ? 'another' : 'new'} section`}
+							composerButtonLabel={`Add ${mappedSections.length > 0 ? 'another' : 'new'} section`}
 							buttonLabel='Add section'
+							onSaveCallback={onSaveNewSection}
 						/>
 					)}
 				</div>

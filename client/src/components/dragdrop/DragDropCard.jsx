@@ -1,8 +1,27 @@
 import { memo, useState } from 'react';
+import { Modal } from '../shared';
+import { DragDropNewItem } from './';
+import { useDispatch } from 'react-redux';
+import { moveCardController } from '../../controllers';
 
-export const DragDropCard = memo(({ text, handleDragStart, dragOver, dragLeave, drop }) => {
+export const DragDropCard = memo(({ card, handleDragStart, dragOver, dragLeave, drop }) => {
 	const [itemClass, setItemClass] = useState('section-item');
 	const [editClass, setEditClass] = useState('edit');
+	const [isActive, setIsActive] = useState(false);
+	const { sectionName, ...cardData } = card;
+	const dispatch = useDispatch();
+	let modalData = {};
+
+	if (isActive) {
+		modalData = { ...cardData, title: card.sectionName };
+	}
+
+	const toggleModal = (value) => {
+		if (value === true) {
+		} else {
+		}
+		setIsActive(value);
+	};
 
 	const onDrag = (action) => {
 		// hide/show the dragged item
@@ -12,6 +31,12 @@ export const DragDropCard = memo(({ text, handleDragStart, dragOver, dragLeave, 
 		} else if (action === 'end') {
 			setItemClass('section-item');
 		}
+	};
+
+	const handleUpdateCard = (description) => {
+		// add description
+		modalData = { ...cardData, description };
+		dispatch(moveCardController(modalData));
 	};
 
 	return (
@@ -25,8 +50,24 @@ export const DragDropCard = memo(({ text, handleDragStart, dragOver, dragLeave, 
 			onMouseLeave={() => setEditClass('edit')}
 			onDragStart={() => onDrag('start')}
 			onDragEnd={() => onDrag('end')}>
-			<div className='content' onClick={() => alert('TODO: open modal popup for item details.')}>
-				<p>{text}</p>
+			{isActive && (
+				<Modal data={modalData} onClose={() => toggleModal(false)} isOpen={isActive}>
+					<DragDropNewItem
+						value={card.description}
+						noicon={1}
+						variant='textarea'
+						ismodal={1}
+						placeHolder={'Add a more detailed description...'}
+						composerButtonLabel={
+							card.description ? card.description : 'Add a more detailed description...'
+						}
+						buttonLabel='Save'
+						onSaveCallback={handleUpdateCard}
+					/>
+				</Modal>
+			)}
+			<div className='content' onClick={() => toggleModal(true)}>
+				<p>{card.text}</p>
 				<span
 					className={editClass}
 					onClick={(e) => {

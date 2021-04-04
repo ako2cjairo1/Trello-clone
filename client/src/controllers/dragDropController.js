@@ -30,7 +30,7 @@ const fetchBoardsController = (url = BASE_URL) => async (dispatch) => {
 	}
 };
 
-const getCurrentBoardController = (board) => (dispatch) => {
+const updateCurrentBoardController = (board) => (dispatch) => {
 	dispatch(Actions.updateCurrentBoard(board));
 };
 
@@ -94,7 +94,7 @@ const moveCardController = (card) => async (dispatch) => {
 
 export {
 	fetchBoardsController,
-	getCurrentBoardController,
+	updateCurrentBoardController,
 	createSectionController,
 	updateSectionController,
 	createCardController,

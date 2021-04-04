@@ -1,19 +1,26 @@
 import { memo, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { createSectionController, createCardController } from '../../controllers';
 
 export const DragDropNewItem = memo(
-	({ sectionID, variant, placeHolder, composerButtonLabel, buttonLabel, scrollDown }) => {
-		const [close, setClose] = useState(false);
-		const [sectionName, setSectionName] = useState('');
-		const [cardName, setCardName] = useState('');
+	({
+		sectionID,
+		variant,
+		placeHolder,
+		composerButtonLabel,
+		buttonLabel,
+		scrollDown,
+		onSaveCallback,
+		...args
+	}) => {
+		const [isActive, setIsActive] = useState(false);
+		const [sectionName, setSectionName] = useState(args.value ? args.value : '');
+		const [cardName, setCardName] = useState(args.value ? args.value : '');
 		const inputRef = useRef();
-		const dispatch = useDispatch();
-		const currentBoard = useSelector((state) => state.board.currentBoard);
 
 		// Event Handlers
-		const handleOnOpen = () => {
-			setClose(true);
+		const handleOnOpen = (e) => {
+			setSectionName(args.value ? args.value : '');
+			setCardName(args.value ? args.value : '');
+			setIsActive(true);
 			// create a delay to wait for inputRef to be mounted
 			setTimeout(() => {
 				inputRef.current.focus();
@@ -24,30 +31,33 @@ export const DragDropNewItem = memo(
 		const handleClose = () => {
 			setSectionName('');
 			setCardName('');
-			setClose(false);
+			setIsActive(false);
 		};
 
 		const handleSave = () => {
-			if (isValid()) {
-				if (variant === 'input') {
-					dispatch(createSectionController({ board: currentBoard.id, name: sectionName }));
-				} else {
-					dispatch(createCardController({ section: sectionID, text: cardName }));
-				}
+			if (isValid() || args.ismodal === 1) {
+				onSaveCallback(variant === 'input' ? sectionName : cardName);
 				handleClose();
 			}
 		};
 
-		// util functions
+		const handleKeyUp = (evt) => {
+			if (evt.key === 'Escape') {
+				handleClose();
+			} else if (evt.key === 'Enter' && args.ismodal !== 1) {
+				handleSave();
+			}
+		};
+
 		const isValid = () => {
 			let isValid = false;
 
 			if (variant === 'input') {
-				if (sectionName.trim().length > 0) {
+				if (sectionName?.trim().length > 0) {
 					isValid = true;
 				}
 			} else {
-				if (cardName.trim().length > 0) {
+				if (cardName?.trim().length > 0) {
 					isValid = true;
 				}
 			}
@@ -57,13 +67,22 @@ export const DragDropNewItem = memo(
 		return (
 			<div
 				className={
-					variant === 'input' ? `section ${!close && 'transparent'}` : close ? 'mt-5' : 'mt-10'
-				}>
-				{!close ? (
+					variant === 'input'
+						? `section ${!isActive ? 'transparent' : ''}`
+						: isActive
+						? !isActive
+							? 'button-container mblock-5'
+							: ''
+						: !isActive
+						? 'button-container mblock-10'
+						: ''
+				}
+				{...args}>
+				{!isActive ? (
 					<div
-						className={`card-section-composer ${variant === 'input' && 'color-invert'}`}
+						className={`card-section-composer ${variant === 'input' ? 'color-invert' : ''}`}
 						onClick={handleOnOpen}>
-						<span>+</span>
+						<span>{args.noicon !== 1 ? '+' : ''}</span>
 						<p>{composerButtonLabel}</p>
 					</div>
 				) : (
@@ -78,16 +97,16 @@ export const DragDropNewItem = memo(
 									placeholder={placeHolder}
 									maxLength={50}
 									onChange={(e) => setSectionName(e.target.value)}
-									onKeyUp={(e) => e.key === 'Escape' && handleClose()}
+									onKeyUp={handleKeyUp}
 								/>
 							) : (
 								<textarea
-									className='new-item-textarea'
+									className={args.ismodal === 1 ? 'new-section-input' : 'new-item-textarea'}
 									ref={inputRef}
 									value={cardName}
 									placeholder={placeHolder}
 									onChange={(e) => setCardName(e.target.value)}
-									onKeyUp={(e) => e.key === 'Escape' && handleClose()}
+									onKeyUp={handleKeyUp}
 								/>
 							)}
 						</>
