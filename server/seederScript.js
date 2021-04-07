@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 const connectMongoDB = require('./config/mongoDB');
 const Counter = require('./models/Counter');
 const Board = require('./models/Board');

@@ -35,9 +35,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	padding-inline: 10px;
-	padding-bottom: 26px;
-	overflow-x: auto;
+	overflow-y: auto;
 	height: 100vh;
 }
 .dragdrop-container::-webkit-scrollbar {
@@ -81,29 +79,46 @@
 
 header {
 	position: fixed;
+	left: 0;
 	top: 0;
 	width: 100%;
-	padding-right: 20px;
+	padding: 20px 10px;
 	display: flex;
+	background: rgba(0, 0, 0, 0.24);
 	flex-direction: row;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	height: 60px;
-	z-index: 1;
+	z-index: 2;
 }
 
 .board-menu {
 	display: block;
 	height: 30px;
-	margin-inline: 3px;
-	margin-bottom: 3px;
-
-	padding-inline: 5px;
+	width: fit-content;
+	padding: 0 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
 	line-height: 30px;
 
 	cursor: pointer;
 	color: #fff;
 	border-radius: var(--border-radius);
+	background-color: hsla(0, 0%, 100%, 0.24);
+	transition: var(--transition);
+}
+.board-menu:hover {
+	color: var(--color);
+	transition: var(--transition);
+}
+
+.sections {
+	left: 0;
+	display: flex;
+	margin-top: 60px;
+	padding-left: 10px;
+	flex: 1 1;
+	height: 100%;
 	background: linear-gradient(
 		180deg,
 		rgba(0, 0, 0, 0.24) 0,
@@ -111,21 +126,6 @@ header {
 		transparent 80px,
 		transparent
 	);
-	transition: var(--transition);
-}
-.board-menu:hover {
-	background: none;
-	color: var(--color);
-	background-color: #ebecf0;
-	transition: var(--transition);
-}
-
-.sections {
-	display: flex;
-	padding-top: 60px;
-	flex: 1;
-	width: 100%;
-	height: 100%;
 }
 
 .section-header {
@@ -204,8 +204,7 @@ header {
 	max-height: 780px;
 
 	border-radius: var(--border-radius);
-	background-color: #ebecf0;
-	background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.6));
+	background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
 	box-shadow: 6px 6px 20px rgba(122, 122, 122, 0.212);
 	backdrop-filter: blur(1rem);
 	margin-right: 10px;
@@ -241,6 +240,7 @@ header {
 
 .content {
 	display: flex;
+	margin: 0px 0px 4px;
 	justify-content: space-between;
 }
 
@@ -317,22 +317,17 @@ header {
 }
 
 .section.transparent {
-	color: #fff;
-	background: linear-gradient(
-		180deg,
-		rgba(0, 0, 0, 0.24) 0,
-		rgba(0, 0, 0, 0.24) 48px,
-		transparent 80px,
-		transparent
-	);
+	color: #5e6c84;
+	background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
+	box-shadow: 6px 6px 20px rgb(122 122 122 / 21%);
+	-webkit-backdrop-filter: blur(1rem);
+	backdrop-filter: blur(1rem);
 	transition: var(--transition);
 }
 
 .section.transparent:hover {
-	background: none;
 	color: var(--color);
-	background-color: #ebecf0;
-	transition: var(--transition);
+	background-color: hsla(0, 0%, 100%, 0.24);
 }
 
 .add-card-actions {
@@ -360,14 +355,14 @@ header {
 	transition: var(--transition);
 }
 
-.remove-card-button {
+.close-button {
 	font-size: x-large;
 	line-height: 26px;
 	color: #6b778c;
 	cursor: pointer;
 	transition: var(--transition);
 }
-.remove-card-button:hover {
+.close-button:hover {
 	color: var(--color);
 	transform: rotateZ(90deg);
 	transition: var(--transition);
@@ -393,22 +388,24 @@ header {
 }
 
 .edit {
-	padding: 2px 4px;
-	width: 25px;
+	background-color: #f4f5f7;
+	background-clip: padding-box;
+	background-origin: padding-box;
+	color: #172b4dc4;
 	border-radius: 50%;
-	height: 25px;
-	cursor: pointer;
-	color: #6b778c;
 	opacity: 0;
+	padding: 2px 4px;
+	position: absolute;
+	right: 2px;
+	top: 5px;
+	z-index: 40;
 	transition: var(--transition);
 }
 .edit:hover {
-	background-color: lightgray;
 	color: var(--color);
-	opacity: 1;
-	transition: var(--transition);
+	background-color: #ebecf0;
 }
-.show {
+.section-item:hover .edit {
 	opacity: 1;
 	transition: var(--transition);
 }
@@ -424,4 +421,56 @@ header {
 .invisible {
 	opacity: 0;
 	transition: var(--transition);
+}
+
+.descendform {
+	animation: ascendopacity 0.3s ease-in-out;
+}
+
+.button-container:hover .card-section-composer p {
+	color: var(--color);
+	transition: var(--transition);
+}
+
+.board-content {
+	background: transparent;
+	position: relative;
+	top: 44px;
+	margin-bottom: 80px;
+}
+.form {
+	background-color: #0079bf;
+	background-size: cover;
+	background-position: 50%;
+	border-radius: 3px;
+	box-sizing: border-box;
+	color: #fff;
+	height: 96px;
+	padding: 10px 10px 10px 16px;
+	position: relative;
+	width: 296px;
+}
+.form-close {
+	color: #fff;
+	float: right;
+	position: relative;
+	right: -2px;
+	top: -2px;
+}
+.form-input {
+	border: none !important;
+	background: transparent !important;
+	box-shadow: none;
+	box-sizing: border-box;
+	color: #fff;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Noto Sans, Ubuntu, Droid Sans,
+		Helvetica Neue, sans-serif;
+	font-size: 16px;
+	font-weight: 700;
+	left: -8px;
+	line-height: 24px;
+	margin-bottom: 4px;
+	padding: 2px 8px;
+	position: relative;
+	width: calc(100% - 18px - 16px);
 }

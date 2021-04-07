@@ -8,7 +8,8 @@
 		"server": "npm dev --prefix server",
 		"client": "npm start --prefix client",
 		"dev": "concurrently \"npm run dev --prefix server\" \"npm run client\"",
-		"import": "npm run import --prefix server"
+		"import": "npm run import --prefix server",
+		"truncate": "npm run truncate --prefix server"
 	},
 	"author": "",
 	"license": "ISC",

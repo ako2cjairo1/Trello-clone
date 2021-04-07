@@ -9,7 +9,7 @@ const updateSectionController = async (req, res) => {
 
 		const updateSectionResponse = await Section.findOneAndUpdate(
 			{ _id: sectionData.id },
-			updates,
+			{ $set: updates },
 			// new is set to true to make sure it will reture the updated document
 			{ new: true }
 		);

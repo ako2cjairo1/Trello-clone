@@ -4,6 +4,7 @@ export const DragDropNewItem = memo(
 	({
 		sectionID,
 		variant,
+		isOpen,
 		placeHolder,
 		composerButtonLabel,
 		buttonLabel,
@@ -11,7 +12,7 @@ export const DragDropNewItem = memo(
 		onSaveCallback,
 		...args
 	}) => {
-		const [isActive, setIsActive] = useState(false);
+		const [isActive, setIsActive] = useState(isOpen);
 		const [sectionName, setSectionName] = useState(args.value ? args.value : '');
 		const [cardName, setCardName] = useState(args.value ? args.value : '');
 		const inputRef = useRef();
@@ -68,7 +69,7 @@ export const DragDropNewItem = memo(
 			<div
 				className={
 					variant === 'input'
-						? `section ${!isActive ? 'transparent' : ''}`
+						? `section ${!isActive ? 'transparent' : 'descendform'}`
 						: isActive
 						? !isActive
 							? 'button-container mblock-5'
@@ -87,11 +88,11 @@ export const DragDropNewItem = memo(
 					</div>
 				) : (
 					<>
-						<>
+						<div className={isActive && 'descendform'}>
 							{variant === 'input' ? (
 								<input
 									type='text'
-									className='new-section-input'
+									className={`new-section-input ${isActive && 'descendform'}`}
 									ref={inputRef}
 									value={sectionName}
 									placeholder={placeHolder}
@@ -101,7 +102,11 @@ export const DragDropNewItem = memo(
 								/>
 							) : (
 								<textarea
-									className={args.ismodal === 1 ? 'new-section-input' : 'new-item-textarea'}
+									className={
+										args.ismodal === 1
+											? 'new-section-input descendform'
+											: 'new-item-textarea descendform'
+									}
 									ref={inputRef}
 									value={cardName}
 									placeholder={placeHolder}
@@ -109,12 +114,12 @@ export const DragDropNewItem = memo(
 									onKeyUp={handleKeyUp}
 								/>
 							)}
-						</>
+						</div>
 						<div className='add-card-actions'>
 							<button className='add-card-button' onClick={handleSave}>
 								{buttonLabel}
 							</button>
-							<span className='remove-card-button' onClick={handleClose}>
+							<span className='close-button' onClick={handleClose}>
 								✕
 							</span>
 						</div>

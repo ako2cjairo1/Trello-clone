@@ -4,14 +4,18 @@ const { createUpdateObject } = require('../utils/createUpdateObject');
 
 const updateCardController = async (req, res) => {
 	try {
-		const cardData = req.body;
+		const { card, isUpdateIndex } = req.body;
 		// build mapping of updates, except for 'index'
-		const updates = createUpdateObject(cardData, ['index']);
+		const cardData = createUpdateObject(card, ['index']);
+		// modify updates if we need to change the 'index'
+		const updates = isUpdateIndex
+			? { ...cardData, index: await getCounterController('cards') }
+			: cardData;
 
 		const updateCardResponse = await Card.findByIdAndUpdate(
 			{ _id: cardData.id },
 			// update the index whenever updated
-			{ ...updates, index: await getCounterController('cards') },
+			{ $set: updates },
 			// new is set to true to make sure it will reture the updated document
 			{ new: true }
 		);

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 // Controllers
-import { moveCardController } from '../controllers';
+import { updateCardController } from '../controllers';
+import { Actions } from '../redux/dragdrop/actions';
 
 function useDragDropSections(sections, currentBoard) {
 	const dispatch = useDispatch();
@@ -10,7 +11,7 @@ function useDragDropSections(sections, currentBoard) {
 	let sectionClassNameState = {};
 
 	const currentSections =
-		sections && sections.filter((section) => section.board === currentBoard.id);
+		sections && currentBoard && sections.filter((section) => section.board === currentBoard.id);
 
 	// local state variables
 	const [sectionClasses, setSectionClasses] = useState(sectionClassNameState);
@@ -73,7 +74,7 @@ function useDragDropSections(sections, currentBoard) {
 	fnCardMoved.current = () => {
 		if (secIdFrom && secIdTo && secIdFrom !== secIdTo) {
 			// move card to new section
-			dispatch(moveCardController({ id: cardId, section: secIdTo }));
+			dispatch(updateCardController({ id: cardId, section: secIdTo }, Actions.moveCard));
 			// clear the state of dragged item
 			clearDraggedItem();
 		}

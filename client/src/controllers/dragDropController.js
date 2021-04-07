@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Actions } from '../redux/dragdrop/actions';
+import { Actions, ActionType } from '../redux/dragdrop/actions';
 import { fnMapID } from '../utils/fnMapID';
 
 const BASE_URL = 'http://localhost:5000';
@@ -30,8 +30,67 @@ const fetchBoardsController = (url = BASE_URL) => async (dispatch) => {
 	}
 };
 
-const updateCurrentBoardController = (board) => (dispatch) => {
-	dispatch(Actions.updateCurrentBoard(board));
+const updateCurrentBoardController = (board) => async (dispatch) => {
+	try {
+		dispatch(Actions.isLoading(true));
+		const response = await axios.post(`${BASE_URL}/setcurrentboard/`, board);
+		const updatedBoard = response?.data;
+
+		if (updatedBoard) {
+			dispatch(Actions.updateCurrentBoard(fnMapID([updatedBoard])[0]));
+		}
+	} catch (error) {
+		// set error state
+		dispatch(Actions.updateError(`Can't update the current board. ${error}`));
+	} finally {
+		dispatch(Actions.isLoading(false));
+	}
+};
+
+const createBoardController = (board) => async (dispatch) => {
+	try {
+		const response = await axios.post(`${BASE_URL}/create/board/`, board);
+		const newBoard = response?.data;
+
+		if (newBoard) {
+			// update the state when we get response, and map _id to id
+			dispatch(Actions.addBoard(fnMapID(newBoard)));
+			// set as current board
+			dispatch(updateCurrentBoardController(fnMapID(newBoard)[0]));
+		}
+	} catch (error) {
+		// set error state
+		dispatch(Actions.updateError(`Can't create the board. ${error}`));
+	}
+};
+
+const updateBoardController = (board) => async (dispatch) => {
+	try {
+		const response = await axios.post(`${BASE_URL}/update/board/`, board);
+		const updateBoard = response?.data;
+
+		if (updateBoard) {
+			dispatch(Actions.updateBoard(fnMapID([updateBoard])[0]));
+		}
+	} catch (error) {
+		// set error state
+		dispatch(Actions.updateError(`Can't update the board. ${error}`));
+	}
+};
+
+const closeBoardController = (deletingBoard) => async (dispatch) => {
+	try {
+		const response = await axios.post(`${BASE_URL}/closeboard/`, deletingBoard);
+		const selectedBoard = response?.data;
+
+		if (selectedBoard) {
+			// response data is the defaulted board after deleted board
+			dispatch(Actions.closeBoard(deletingBoard));
+		}
+	} catch (error) {
+		// set error state
+		dispatch(Actions.updateError(`Can't close the board. ${error}`));
+	}
 };
 
 const createSectionController = (section) => async (dispatch) => {
@@ -77,26 +136,30 @@ const createCardController = (card) => async (dispatch) => {
 	}
 };
 
-const moveCardController = (card) => async (dispatch) => {
+const updateCardController = (card, action) => async (dispatch) => {
 	try {
-		const response = await axios.post(`${BASE_URL}/update/card/`, card);
-		const movedCard = response?.data;
+		const isUpdateIndex = action().type === ActionType.UPDATE_CARD ? false : true;
+		const response = await axios.post(`${BASE_URL}/update/card/`, { card, isUpdateIndex });
+		const updatedCard = response?.data;
 
-		if (movedCard) {
+		if (updatedCard) {
 			// update the state when we get response, and map _id to id
-			dispatch(Actions.moveCard(fnMapID([movedCard])[0]));
+			dispatch(action(fnMapID([updatedCard])[0]));
 		}
 	} catch (error) {
 		// set error state
-		dispatch(Actions.updateError(`Can't move the card. ${error}`));
+		dispatch(Actions.updateError(`Can't update the card. ${error}`));
 	}
 };
 
 export {
 	fetchBoardsController,
 	updateCurrentBoardController,
+	createBoardController,
+	updateBoardController,
+	closeBoardController,
 	createSectionController,
 	updateSectionController,
 	createCardController,
-	moveCardController,
+	updateCardController,
 };

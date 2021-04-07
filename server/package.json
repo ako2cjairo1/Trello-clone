@@ -5,7 +5,8 @@
 	"main": "server.js",
 	"scripts": {
 		"dev": "nodemon server.js",
-		"import": "node seederScript.js"
+		"import": "node seederScript.js",
+		"truncate": "node truncateScript.js"
 	},
 	"author": "",
 	"license": "ISC",

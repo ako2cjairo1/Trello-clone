@@ -10,6 +10,10 @@
 	bottom: 0;
 	left: 0;
 	right: 0;
+	display: block;
+	justify-content: center;
+	overflow-y: auto;
+	z-index: 3;
 }
 .modal-overlay {
 	position: fixed;
@@ -23,18 +27,25 @@
 
 .modal-container {
 	position: relative;
-	top: 50%;
-	left: 50%;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+
+	margin: auto;
+	margin-block: 5%;
 	padding-top: 5px;
 	padding-bottom: 10px;
 	padding-inline: 10px;
-	transform: translate(-50%, -50%);
-	width: 500px;
-	height: 200px;
-	min-height: 400px;
-	overflow-y: auto;
-	z-index: 101;
 
+	width: auto;
+	min-width: 100px;
+	max-width: 768px;
+	height: auto;
+	min-height: 400px;
+
+	overflow: hidden;
+	z-index: 101;
 	background-color: #fff;
 	color: var(--color);
 	border-radius: var(--border-radius);
@@ -50,13 +61,27 @@
 }
 .modal-body {
 	display: flex;
+	width: 97%;
 	flex-direction: column;
 	justify-content: space-between;
-	margin: 30px 10px 8px 10px;
+	margin-top: 20px;
+	margin-left: 10px;
 }
 .d-flex {
 	display: flex;
 	align-items: flex-start;
+}
+.d-flex-column {
+	display: flex;
+	width: 97%;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.d-flex h2,
+.d-flex h3 {
+	padding-top: 3px;
+	padding-left: 15px;
 }
 
 .title-icon {
@@ -71,22 +96,72 @@
 	cursor: pointer;
 	padding: 3px;
 	border-radius: 50%;
+	background-color: hsla(0, 0%, 100%, 0.24);
+	z-index: 1;
 	transition: var(--transition);
 }
-.close-icon:hover {
+.close {
+	width: -moz-fit-content;
+	width: fit-content;
+	height: -moz-fit-content;
+	height: fit-content;
+}
+.close.modal {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 1;
+}
+.close.board {
+	display: flex;
+	align-items: center;
+	position: relative;
+	top: 2px;
+	width: -moz-fit-content;
+	width: fit-content;
+}
+.close.board .close-icon {
+	width: 25px;
+	height: 25px;
+	padding: 2px;
+}
+.close:hover .close-icon {
 	background-color: #ebecf0;
 	color: var(--color);
 	transform: rotateZ(-90deg);
 	transition: var(--transition);
 }
-.title {
-	align-items: center;
+.close-board-label {
+	z-index: 0;
+	opacity: 0;
+	display: none;
+	cursor: pointer;
+	transition: var(--transition);
 }
-.title h2,
-h3 {
-	padding-left: 15px;
-	padding-top: 3px;
-	color: #172b4d;
+.close:hover .close-board-label {
+	display: block;
+	padding-block: 2px;
+	padding-right: 10px;
+	border-radius: 20px;
+	background-color: hsla(0, 0%, 100%, 0.24);
+	animation: deleteboard 0.7s infinite alternate;
+	transition: var(--transition);
+}
+@keyframes deleteboard {
+	0% {
+		opacity: 0;
+		padding-left: 0;
+		transform: translateX(-30px);
+	}
+	100% {
+		opacity: 1;
+		padding-left: 27px;
+		transform: translate(-20px);
+	}
+}
+.title {
+	width: 100%;
+	align-items: center;
 }
 
 .section-link {
