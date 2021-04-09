@@ -19,10 +19,10 @@ const Modal = (props) => {
 	}
 
 	return createPortal(
-		<div className='modal-wrapper'>
+		<div className='modal-wrapper' style={{ border: '2px solid purple' }}>
 			{!noBackdrop && <div className='modal-overlay' onClick={clickBackdropToClose && onClose} />}
 
-			<div style={style} className={containerClassName}>
+			<div className={containerClassName} style={style}>
 				{!hideCloseButton && (
 					<div className='close modal' onClick={onClose}>
 						<IoCloseOutline className='close-icon' />

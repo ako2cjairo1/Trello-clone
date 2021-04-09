@@ -8,6 +8,7 @@ const ActionType = {
 	ADD_CARD: 'dragdrop/ADD_CARD',
 	UPDATE_CARD: 'dragdrop/UPDATE_CARD',
 	MOVE_CARD: 'dragdrop/MOVE_CARD',
+	DELETE_CARD: 'dragdrop/DELETE_CARD',
 	FETCH_BOARDS: 'dragdrop/FETCH_BOARDS',
 	IS_LOADING: 'dragdrop/IS_LOADING',
 	UPDATE_ERROR: 'dragdrop/UPDATE_ERROR',
@@ -68,6 +69,12 @@ const moveCardAction = (movedCard) => {
 		payload: movedCard,
 	};
 };
+const deleteCardAction = (deletedCard) => {
+	return {
+		type: ActionType.DELETE_CARD,
+		payload: deletedCard,
+	};
+};
 const fetchBoardsAction = (data) => {
 	return {
 		type: ActionType.FETCH_BOARDS,
@@ -98,6 +105,7 @@ const Actions = {
 	addCard: (card) => addCardAction(card),
 	updateCard: (card) => updateCardAction(card),
 	moveCard: (card) => moveCardAction(card),
+	deleteCard: (card) => deleteCardAction(card),
 	fetchBoards: (data) => fetchBoardsAction(data),
 	isLoading: (isLoading) => isLoadingAction(isLoading),
 	updateError: (error) => updateErrorAction(error),

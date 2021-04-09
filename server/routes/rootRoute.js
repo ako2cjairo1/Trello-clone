@@ -4,6 +4,7 @@ const router = express.Router();
 const { getAllController } = require('../controllers/getAllController');
 const { createBoardController } = require('../controllers/createBoardController');
 const { updateBoardController } = require('../controllers/updateBoardController');
+const { deleteCardController } = require('../controllers/deleteCardController');
 const { closeBoardController } = require('../controllers/closeBoardController');
 const { updateCurrentBoardController } = require('../controllers/updateCurrentBoardController');
 const { createSectionController } = require('../controllers/createSectionController');
@@ -21,6 +22,10 @@ router.post('/create/board/', createBoardController);
 // ROUTE: /update/board/
 // body: Board (json object)
 router.post('/update/board/', updateBoardController);
+
+// ROUTE: /delete/card/
+// body: Card (json object)
+router.post('/delete/card/', deleteCardController);
 
 // ROUTE: /closeboard/
 // body: Board (json object)

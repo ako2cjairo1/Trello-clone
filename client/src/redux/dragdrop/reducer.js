@@ -42,10 +42,10 @@ export function dragDropReducer(state = board, action) {
 			};
 
 		case ActionType.CLOSE_BOARD:
-			const closingBoard = action.payload;
+			const closedBoard = action.payload;
 			return {
 				...state,
-				boards: state.boards.filter((board) => board.id !== closingBoard.id),
+				boards: state.boards.filter((board) => board.id !== closedBoard.id),
 			};
 
 		case ActionType.ADD_SECTION:
@@ -95,6 +95,12 @@ export function dragDropReducer(state = board, action) {
 				cards: fnSortByIndex(updatedCards),
 			};
 
+		case ActionType.DELETE_CARD:
+			const deletedCard = action.payload;
+			return {
+				...state,
+				cards: state.cards.filter((card) => card.id !== deletedCard.id),
+			};
 		case ActionType.IS_LOADING:
 			return {
 				...state,

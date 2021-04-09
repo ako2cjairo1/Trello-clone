@@ -1,6 +1,6 @@
 import { memo, useState, useRef } from 'react';
 
-export const DragDropNewItem = memo(
+export const CreateNewItem = memo(
 	({
 		sectionID,
 		variant,
@@ -47,6 +47,8 @@ export const DragDropNewItem = memo(
 				handleClose();
 			} else if (evt.key === 'Enter' && args.ismodal !== 1) {
 				handleSave();
+			} else if (evt.key === 'Escape') {
+				handleClose();
 			}
 		};
 
@@ -99,6 +101,7 @@ export const DragDropNewItem = memo(
 									maxLength={50}
 									onChange={(e) => setSectionName(e.target.value)}
 									onKeyUp={handleKeyUp}
+									autoFocus
 								/>
 							) : (
 								<textarea
@@ -112,6 +115,7 @@ export const DragDropNewItem = memo(
 									placeholder={placeHolder}
 									onChange={(e) => setCardName(e.target.value)}
 									onKeyUp={handleKeyUp}
+									autoFocus
 								/>
 							)}
 						</div>

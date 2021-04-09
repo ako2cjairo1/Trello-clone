@@ -80,6 +80,8 @@ const updateBoardController = (board) => async (dispatch) => {
 
 const closeBoardController = (deletingBoard) => async (dispatch) => {
 	try {
+		// set Loading state
+		dispatch(Actions.isLoading(true));
 		const response = await axios.post(`${BASE_URL}/closeboard/`, deletingBoard);
 		const selectedBoard = response?.data;
 
@@ -90,6 +92,9 @@ const closeBoardController = (deletingBoard) => async (dispatch) => {
 	} catch (error) {
 		// set error state
 		dispatch(Actions.updateError(`Can't close the board. ${error}`));
+	} finally {
+		// set to not loading
+		dispatch(Actions.isLoading(false));
 	}
 };
 
@@ -152,6 +157,18 @@ const updateCardController = (card, action) => async (dispatch) => {
 	}
 };
 
+const deleteCardController = (card) => async (dispatch) => {
+	try {
+		const response = await axios.post(`${BASE_URL}/delete/card/`, card);
+
+		if (response.status === 200) {
+			dispatch(Actions.deleteCard(card));
+		}
+	} catch (error) {
+		dispatch(Actions.updateError(`Can't delete card. ${error}`));
+	}
+};
+
 export {
 	fetchBoardsController,
 	updateCurrentBoardController,
@@ -162,4 +179,5 @@ export {
 	updateSectionController,
 	createCardController,
 	updateCardController,
+	deleteCardController,
 };

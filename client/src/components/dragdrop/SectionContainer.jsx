@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { DragDropCard, DragDropNewItem } from './';
+import { CardContainer, CreateNewItem } from '.';
 // Controllers
 import { updateSectionController, createCardController } from '../../controllers';
 
-export const DragDropSection = ({
+export const SectionContainer = ({
 	section: { id: sectionID, name },
 	handlers: { sectionClassName, handleDragOver, handleDragStart, handleDragLeave, handleDrop },
 }) => {
@@ -56,7 +56,8 @@ export const DragDropSection = ({
 				onDrop={onDrop}>
 				<div className='section-header'>
 					<div className='section-title'>
-						<textarea
+						<input
+							type='text'
 							className={isEditing ? 'section-title-name mod-title-name' : 'section-title-name'}
 							readOnly={!isEditing}
 							value={editedName}
@@ -70,12 +71,13 @@ export const DragDropSection = ({
 						<span>⋮</span>
 					</div>
 				</div>
+
 				<div className='section-container'>
 					{cards &&
 						cards.map((card) => {
 							if (card.section === sectionID) {
 								return (
-									<DragDropCard
+									<CardContainer
 										key={card.id}
 										card={{ ...card, sectionName: name }}
 										dragOver={onDragOver}
@@ -89,7 +91,8 @@ export const DragDropSection = ({
 						})}
 					<div ref={endCardRef} />
 				</div>
-				<DragDropNewItem
+
+				<CreateNewItem
 					sectionID={sectionID}
 					variant='textarea'
 					placeHolder='Enter a title for this card...'
