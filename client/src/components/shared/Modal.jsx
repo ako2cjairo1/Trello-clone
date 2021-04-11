@@ -1,8 +1,9 @@
 import './Modal.css';
+import { memo } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 import { createPortal } from 'react-dom';
 
-const Modal = (props) => {
+export const Modal = memo((props) => {
 	const {
 		children,
 		isOpen,
@@ -19,7 +20,7 @@ const Modal = (props) => {
 	}
 
 	return createPortal(
-		<div className='modal-wrapper' style={{ border: '2px solid purple' }}>
+		<div className='modal-wrapper'>
 			{!noBackdrop && <div className='modal-overlay' onClick={clickBackdropToClose && onClose} />}
 
 			<div className={containerClassName} style={style}>
@@ -33,6 +34,4 @@ const Modal = (props) => {
 		</div>,
 		document.getElementById('modal-root')
 	);
-};
-
-export { Modal };
+});

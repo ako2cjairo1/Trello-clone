@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Actions, ActionType } from '../redux/dragdrop/actions';
-import { fnMapID } from '../utils/fnMapID';
+import { fnMapID, fnSortByIndex } from '../utils';
 
 const BASE_URL = 'http://localhost:5000';
 
@@ -14,18 +14,19 @@ const fetchBoardsController = (url = BASE_URL) => async (dispatch) => {
 		if (fetchedData) {
 			const { boards, sections, cards } = fetchedData;
 			const data = {
-				boards: fnMapID(boards),
-				sections: fnMapID(sections),
-				cards: fnMapID(cards),
+				boards: fnSortByIndex(fnMapID(boards)),
+				sections: fnSortByIndex(fnMapID(sections)),
+				cards: fnSortByIndex(fnMapID(cards)),
 			};
 			// update the state when we get data
 			dispatch(Actions.fetchBoards(data));
+			// set to not loading
+			dispatch(Actions.isLoading(false));
 		}
 	} catch (error) {
 		// set error state
 		dispatch(Actions.updateError(error));
-	} finally {
-		// set state to not loading
+		// set to not loading
 		dispatch(Actions.isLoading(false));
 	}
 };
@@ -38,11 +39,13 @@ const updateCurrentBoardController = (board) => async (dispatch) => {
 
 		if (updatedBoard) {
 			dispatch(Actions.updateCurrentBoard(fnMapID([updatedBoard])[0]));
+			// set to not loading
+			dispatch(Actions.isLoading(false));
 		}
 	} catch (error) {
 		// set error state
 		dispatch(Actions.updateError(`Can't update the current board. ${error}`));
-	} finally {
+		// set to not loading
 		dispatch(Actions.isLoading(false));
 	}
 };
@@ -83,16 +86,23 @@ const closeBoardController = (deletingBoard) => async (dispatch) => {
 		// set Loading state
 		dispatch(Actions.isLoading(true));
 		const response = await axios.post(`${BASE_URL}/closeboard/`, deletingBoard);
-		const selectedBoard = response?.data;
+		const updatedCollections = response?.data;
 
-		if (selectedBoard) {
+		if (updatedCollections) {
+			const { boards, sections, cards } = updatedCollections;
+			const mappedCollections = {
+				boards: fnSortByIndex(fnMapID(boards)),
+				sections: fnSortByIndex(fnMapID(sections)),
+				cards: fnSortByIndex(fnMapID(cards)),
+			};
 			// response data is the defaulted board after deleted board
-			dispatch(Actions.closeBoard(deletingBoard));
+			dispatch(Actions.closeBoard(mappedCollections));
+			// set to not loading
+			dispatch(Actions.isLoading(false));
 		}
 	} catch (error) {
 		// set error state
 		dispatch(Actions.updateError(`Can't close the board. ${error}`));
-	} finally {
 		// set to not loading
 		dispatch(Actions.isLoading(false));
 	}

@@ -20,49 +20,13 @@ function useDragDropSections(sections, currentBoard) {
 	const [secIdFrom, setSecIdFrom] = useState();
 	const [secIdTo, setSecIdTo] = useState();
 
-	// Action Handlers
-	const handleDragStart = (id, fr) => {
-		// clear the previous dragged item states before starting a new one
-		clearDraggedItem();
-		// capture new dragged item id
-		setCardId(id);
-		setSecIdFrom(fr);
-	};
-
-	const handleDrop = (sectionId) => setSecIdTo(sectionId);
-
-	const handleDragOver = (evt, secID) => {
-		evt.preventDefault();
-
-		if (secID !== secIdFrom) {
-			sections.forEach(({ id }) => {
-				if (secID === id) {
-					if (!sectionClasses[id].includes('hovered')) {
-						// append 'hovered' class name
-						setSectionClasses((prevClass) => ({
-							...prevClass,
-							[id]: prevClass[id] + ' hovered',
-						}));
-					}
-				}
-			});
+	// Lifecycle Actions
+	useEffect(() => {
+		if (sections) {
+			fnInitSections.current();
+			fnCardMoved.current();
 		}
-	};
-
-	const handleDragLeave = (secID) => {
-		sections.forEach(({ id }) => {
-			if (secID === id) {
-				// remove 'hovered' class name
-				setSectionClasses((prevClass) => ({ ...prevClass, [id]: 'section' }));
-			}
-		});
-	};
-
-	const clearDraggedItem = () => {
-		setCardId(null);
-		setSecIdFrom(null);
-		setSecIdTo(null);
-	};
+	}, [sections, secIdTo]);
 
 	fnInitSections.current = () => {
 		sections.forEach(({ id }) => {
@@ -80,12 +44,45 @@ function useDragDropSections(sections, currentBoard) {
 		}
 	};
 
-	useEffect(() => {
-		if (sections) {
-			fnInitSections.current();
-			fnCardMoved.current();
+	// Action Handlers
+	const handleDragStart = (id, fr) => {
+		// clear the previous dragged item states before starting a new one
+		clearDraggedItem();
+		// capture new dragged item id
+		setCardId(id);
+		setSecIdFrom(fr);
+	};
+	const handleDrop = (sectionId) => setSecIdTo(sectionId);
+	const handleDragOver = (evt, secID) => {
+		evt.preventDefault();
+
+		if (secID !== secIdFrom) {
+			sections.forEach(({ id }) => {
+				if (secID === id) {
+					if (!sectionClasses[id].includes('hovered')) {
+						// append 'hovered' class name
+						setSectionClasses((prevClass) => ({
+							...prevClass,
+							[id]: prevClass[id] + ' hovered',
+						}));
+					}
+				}
+			});
 		}
-	}, [sections, secIdTo]);
+	};
+	const handleDragLeave = (secID) => {
+		sections.forEach(({ id }) => {
+			if (secID === id) {
+				// remove 'hovered' class name
+				setSectionClasses((prevClass) => ({ ...prevClass, [id]: 'section' }));
+			}
+		});
+	};
+	const clearDraggedItem = () => {
+		setCardId(null);
+		setSecIdFrom(null);
+		setSecIdTo(null);
+	};
 
 	// build the object mapping of sections with associated action handlers
 	const mappedBoard =

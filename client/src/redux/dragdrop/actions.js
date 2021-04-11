@@ -33,10 +33,10 @@ const updateBoardAction = (board) => {
 		payload: board,
 	};
 };
-const closeBoardAction = (board) => {
+const closeBoardAction = (boardCollections) => {
 	return {
 		type: ActionType.CLOSE_BOARD,
-		payload: board,
+		payload: boardCollections,
 	};
 };
 const addSectionAction = (section) => {
@@ -99,7 +99,7 @@ const Actions = {
 	updateCurrentBoard: (board) => updateCurrentBoardAction(board),
 	addBoard: (board) => addBoardAction(board),
 	updateBoard: (board) => updateBoardAction(board),
-	closeBoard: (board) => closeBoardAction(board),
+	closeBoard: (boardCollections) => closeBoardAction(boardCollections),
 	addSection: (section) => addSectionAction(section),
 	updateSection: (section) => updateSectionAction(section),
 	addCard: (card) => addCardAction(card),

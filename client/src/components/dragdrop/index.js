@@ -1,5 +1,6 @@
 export * from './DragDropContainer';
 export * from './BoardButtons';
+export * from './HeaderButtons';
 export * from './SectionContainer';
 export * from './CardContainer';
 export * from './CreateNewItem';

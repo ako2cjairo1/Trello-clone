@@ -9,13 +9,19 @@ export function CreateBoardModal(props) {
 
 	const [boardTitle, setBoardTitle] = useState('');
 
-	const handleCreateBoard = (evt) => {
+	const handleCreateBoard = () => {
+		if (boardTitle.trim() !== '') {
+			// ceate the board and set as current board selected
+			dispatch(createBoardController({ title: boardTitle }));
+			setBoardTitle('');
+			onClose();
+		}
+	};
+
+	const handleKeyStroke = (evt) => {
 		if (evt.key === 'Enter') {
 			if (boardTitle.trim() !== '') {
-				// ceate the board and set as current board selected
-				dispatch(createBoardController({ title: boardTitle }));
-				setBoardTitle('');
-				onClose();
+				handleCreateBoard();
 			}
 		} else if (evt.key === 'Escape') {
 			setBoardTitle('');
@@ -46,7 +52,7 @@ export function CreateBoardModal(props) {
 							placeholder='Add board title'
 							value={boardTitle}
 							onChange={(e) => setBoardTitle(e.target.value)}
-							onKeyUp={handleCreateBoard}
+							onKeyUp={handleKeyStroke}
 							autoFocus
 						/>
 						<div className='add-card-actions'>

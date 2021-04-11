@@ -25,18 +25,23 @@ const cascadeDelete = async (closingBoard) => {
 const closeBoardController = async (req, res) => {
 	try {
 		const closingBoard = req.body;
-		cascadeDelete(closingBoard);
+		await cascadeDelete(closingBoard);
 
 		const selectedResponse = await Board.updateOne(
 			{},
-			// select a default board
+			// set a default board
 			{ $set: { index: 1 } },
 			// new is set to true to make sure it will reture the updated document
 			{ new: true }
 		);
 
 		if (selectedResponse) {
-			res.json(selectedResponse);
+			const boards = await Board.find({});
+			const sections = await Section.find({});
+			const cards = await Card.find({});
+
+			// send the updated collections
+			res.json({ boards, sections, cards });
 		}
 	} catch (error) {
 		res.json({ message: `Server Error: ${error}` });

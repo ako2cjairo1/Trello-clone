@@ -42,10 +42,17 @@ export function dragDropReducer(state = board, action) {
 			};
 
 		case ActionType.CLOSE_BOARD:
-			const closedBoard = action.payload;
+			const {
+				boards: remainingBoards,
+				sections: remainingSections,
+				cards: remainingCards,
+			} = action.payload;
+
 			return {
 				...state,
-				boards: state.boards.filter((board) => board.id !== closedBoard.id),
+				boards: remainingBoards,
+				sections: remainingSections,
+				cards: remainingCards,
 			};
 
 		case ActionType.ADD_SECTION:
@@ -121,9 +128,9 @@ export function dragDropReducer(state = board, action) {
 			} = action.payload;
 			return {
 				...state,
-				boards: fnSortByIndex(fetchedBoards),
-				sections: fnSortByIndex(fetchedSections),
-				cards: fnSortByIndex(fetchedCards),
+				boards: fetchedBoards,
+				sections: fetchedSections,
+				cards: fetchedCards,
 			};
 
 		default:

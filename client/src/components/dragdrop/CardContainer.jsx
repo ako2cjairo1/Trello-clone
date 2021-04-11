@@ -4,31 +4,7 @@ import { OpenCardModal, EditCardModal } from '.';
 import { IoList, IoPencil } from 'react-icons/io5';
 import { updateCardController, deleteCardController } from '../../controllers';
 import { Actions } from '../../redux/dragdrop/actions';
-
-function getCardRelativePosition(el) {
-	var xPosition = 0;
-	var yPosition = 0;
-
-	while (el) {
-		if (el.tagName === 'BODY') {
-			// deal with browser quirks with body/window/document and page scroll
-			var xScrollPos = el.scrollLeft || document.documentElement.scrollLeft;
-			var yScrollPos = el.scrollTop || document.documentElement.scrollTop;
-
-			xPosition += el.offsetLeft - xScrollPos + el.clientLeft;
-			yPosition += el.offsetTop - yScrollPos + el.clientTop;
-		} else {
-			xPosition += el.offsetLeft - el.scrollLeft + el.clientLeft;
-			yPosition += el.offsetTop - el.scrollTop + el.clientTop;
-		}
-
-		el = el.offsetParent;
-	}
-	return {
-		left: xPosition,
-		top: yPosition,
-	};
-}
+import { fnGetElementRelativePosition } from '../../utils';
 
 export const CardContainer = memo(({ card, handleDragStart, dragOver, dragLeave, drop }) => {
 	const dispatch = useDispatch();
@@ -56,7 +32,7 @@ export const CardContainer = memo(({ card, handleDragStart, dragOver, dragLeave,
 		evt.stopPropagation();
 
 		const relativeCard = document.getElementById(card.id);
-		const { top, left } = getCardRelativePosition(relativeCard);
+		const { top, left } = fnGetElementRelativePosition(relativeCard);
 
 		setCardCoordinate({
 			top,

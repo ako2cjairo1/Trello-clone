@@ -3,7 +3,7 @@
 	--color: #172b4d;
 	--border-radius: 3px;
 	--vscrollbarBG: #d9dce2;
-	--vthumbBG: #bdc3cd;
+	/* --vthumbBG: #bdc3cd; */
 	--hscrollbarBG: hsla(0, 0%, 100%, 0.24);
 	--hthumbBG: hsla(0, 0%, 100%, 0.24);
 }
@@ -13,22 +13,26 @@
 	width: 258px;
 	margin-block: 5px;
 	margin-left: -2px;
-	overflow-y: auto;
+	overflow-y: hidden;
 	overflow-x: hidden;
+	transition: var(--transition);
+}
+.section-container:hover {
+	overflow-y: auto;
 }
 .section-container::-webkit-scrollbar {
-	width: 9px;
+	width: 8px;
 	scrollbar-width: thin;
-	scrollbar-color: var(--vthumbBG) var(--vscrollbarBG);
 }
 .section-container::-webkit-scrollbar-track {
 	border-radius: 9px;
-	border: 3px solid var(--vscrollbarBG);
+	/* border: 3px solid var(--vscrollbarBG); */
 	background: var(--vscrollbarBG);
 }
 .section-container::-webkit-scrollbar-thumb {
 	border-radius: 9px;
-	background-color: var(--vthumbBG);
+	/* background-color: var(--vthumbBG); */
+	background-color: rgba(0, 0, 0, 0.2);
 }
 
 .dragdrop-container {
@@ -256,7 +260,7 @@ header {
 	height: fit-content;
 	max-height: 750px;
 	border-radius: var(--border-radius);
-	background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
+	background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3));
 	box-shadow: 6px 6px 20px rgba(122, 122, 122, 0.212);
 	-webkit-backdrop-filter: blur(1rem);
 	backdrop-filter: blur(1rem);
@@ -408,7 +412,7 @@ header {
 	position: relative;
 	display: block;
 
-	margin-bottom: 8px !important;
+	margin-bottom: 20px !important;
 	margin-left: -2px;
 	padding: 6px 8px 10px;
 

@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import {
 	IoCardOutline,
 	IoPricetagsOutline,
@@ -11,14 +11,20 @@ import { Modal } from '../shared';
 export const EditCardModal = memo((props) => {
 	const { card, cardCoordinates, isActive, actionHandlers } = props;
 	const { openCardModal, closeEditor, saveCard, deleteCard } = actionHandlers;
-	const [cardUpdate, setCardUpdate] = useState(card);
+	const [cardUpdate, setCardUpdate] = useState('');
 
-	const handleSaveCard = () => saveCard(cardUpdate);
+	useEffect(() => {
+		setCardUpdate(card);
+	}, [card]);
+
 	const handleCardText = (evt) => setCardUpdate((prev) => ({ ...prev, text: evt.target.value }));
+	const handleSaveCard = () => saveCard(cardUpdate);
 	const handleKeyStroke = (evt) => {
 		if (evt.key === 'Enter') {
 			handleSaveCard();
 		} else if (evt.key === 'Escape') {
+			// set to previous state of card
+			setCardUpdate(card);
 			closeEditor();
 		}
 	};

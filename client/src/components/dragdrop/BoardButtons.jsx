@@ -1,67 +1,73 @@
 import './BoardButtons.css';
-import { useState, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateCurrentBoardController } from '../../controllers';
-import { IoAppsSharp, IoPodiumOutline, IoHomeOutline } from 'react-icons/io5';
+import { memo } from 'react';
+import {
+	IoAppsSharp,
+	IoPodiumOutline,
+	IoHomeOutline,
+	IoAddOutline,
+	IoNotificationsOutline,
+	IoInformationCircleOutline,
+	IoPersonOutline,
+} from 'react-icons/io5';
 
-export const BoardButtons = () => {
-	const [selectedBoard, setSelectedBoard] = useState();
-	const dispatch = useDispatch();
-	let initDefaultBoard = useRef(null);
-
-	const boards = useSelector((state) => state.board.boards);
-
-	initDefaultBoard.current = () => {
-		if (boards && boards.length > 0) {
-			const defaultBoard = boards.find((board) => board.index === 1);
-			if (defaultBoard) {
-				setSelectedBoard(defaultBoard);
-			}
-		}
-	};
-
-	const onChangeBoard = (board) => {
-		if (selectedBoard.id !== board.id) {
-			dispatch(updateCurrentBoardController(board));
-			setSelectedBoard(board);
-		}
-	};
-
-	useEffect(() => {
-		initDefaultBoard.current();
-	}, [boards]);
+export const BoardButtons = memo((props) => {
+	// destructure component props
+	const { boards, currentBoard, actionHandlers } = props;
+	// destructure action handlers
+	const { openCreateBoard, selectBoard } = actionHandlers;
 
 	return (
-		<>
-			<div className='board-menu padding-inline'>
-				<IoAppsSharp className='lg' />
-			</div>
-			<div className='board-menu'>
-				<IoHomeOutline className='lg' />
-			</div>
-			{selectedBoard && boards.length > 1 && (
-				<div className='dropdown'>
-					<div className='board-menu'>
-						<IoPodiumOutline className='lg' />
-						<h3>Boards</h3>
-					</div>
-					{selectedBoard && boards.length > 1 && (
-						<div className='dropdown-content'>
-							{boards.map((board) => {
-								const { id, title } = board;
-								return (
-									<h3
-										key={id}
-										className='board-menu item-wrap'
-										onClick={() => onChangeBoard(board)}>
-										{title}
-									</h3>
-								);
-							})}
-						</div>
-					)}
+		<header>
+			<div className='left'>
+				<div className='board-menu padding-inline'>
+					<IoAppsSharp className='lg' />
 				</div>
-			)}
-		</>
+				<div className='board-menu'>
+					<IoHomeOutline className='lg' />
+				</div>
+				{/* Show the Board dropdown selection if there are 2 or more options  */}
+				{currentBoard && (
+					<div className='dropdown'>
+						<div className='board-menu'>
+							<IoPodiumOutline className='lg' />
+							<h3>Boards</h3>
+						</div>
+						{currentBoard && boards.length > 1 && (
+							<div className='dropdown-content'>
+								{boards.map((board) => {
+									if (board.id !== currentBoard.id) {
+										const { id, title } = board;
+										return (
+											<h3
+												key={id}
+												className='board-menu item-wrap'
+												onClick={() => selectBoard(board)}>
+												{title}
+											</h3>
+										);
+									}
+									return null;
+								})}
+							</div>
+						)}
+					</div>
+				)}
+			</div>
+
+			<div className='right'>
+				<div title='Create a board' className='board-menu' onClick={openCreateBoard}>
+					<IoAddOutline className='lg' />
+				</div>
+				<div className='board-menu'>
+					<IoInformationCircleOutline className='lg' />
+				</div>
+				<div className='board-menu padding-inline'>
+					<IoNotificationsOutline className='lg' />
+				</div>
+				<div className='board-menu avatar'>
+					<IoPersonOutline className='lg' />
+				</div>
+			</div>
+		</header>
 	);
-};
+});
