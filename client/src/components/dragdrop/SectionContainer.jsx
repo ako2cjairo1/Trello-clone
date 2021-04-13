@@ -13,7 +13,7 @@ export const SectionContainer = ({
 
 	// Global state
 	// map cards by section
-	const cards = useSelector((state) => state.board.cards);
+	const cards = useSelector((state) => state.trello.cards);
 
 	// Local state
 	const [editedName, setEditedName] = useState(name);

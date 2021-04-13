@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import { dragDropReducer } from './dragdrop';
+import { trelloReducer } from './dragdrop';
 
 export default combineReducers({
-	board: dragDropReducer,
+	trello: trelloReducer,
 });

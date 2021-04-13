@@ -1,4 +1,4 @@
-export const board = {
+export const trelloInitState = {
 	boards: [],
 	sections: [],
 	cards: [],

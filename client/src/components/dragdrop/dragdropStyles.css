@@ -1,7 +1,7 @@
 :root {
 	--transition: all 0.3s ease-out;
 	--color: #172b4d;
-	--border-radius: 3px;
+	--border-radius: 5px;
 	--vscrollbarBG: #d9dce2;
 	/* --vthumbBG: #bdc3cd; */
 	--hscrollbarBG: hsla(0, 0%, 100%, 0.24);
@@ -350,14 +350,15 @@ header {
 }
 
 .card-editor-sidebuttons {
-	left: 100%;
+	left: 101%;
 	position: absolute;
 	top: 0;
 	width: fit-content;
 	z-index: 0;
 }
 .card-editor-button {
-	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
+	border-radius: var(--border-radius);
 	clear: both;
 	color: #e6e6e6;
 	display: block;
@@ -366,15 +367,12 @@ header {
 	padding: 6px 12px 6px 8px;
 	text-decoration: none;
 	cursor: pointer;
-	background: rgba(0, 0, 0, 0.6);
-	transform: translateX(0px);
 	transition: transform 85ms ease-in;
 }
 .card-editor-button:hover {
 	background: rgba(0, 0, 0, 0.8);
 	color: #fff;
 	transform: translateX(5px);
-	transition: transform 85ms ease-out;
 }
 
 .card-section-composer {

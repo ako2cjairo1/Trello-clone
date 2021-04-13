@@ -2,9 +2,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import rootReducer from './redux/rootReducer';
-import { board } from './redux/initialState';
-
-const initialState = { board };
 
 // gather middlewares
 const middlewares = [thunk];
@@ -13,7 +10,7 @@ const composeWithDevTools = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compo
 // encapsulate middlewares in redux devtool HOC
 const storeEnhancer = composeWithDevTools(applyMiddleware(...middlewares));
 // create store
-const store = createStore(rootReducer, initialState, storeEnhancer);
+const store = createStore(rootReducer, storeEnhancer);
 // wrapper component of redux store
 export default function ReduxStoreProvider({ children }) {
 	return <Provider store={store}>{children}</Provider>;

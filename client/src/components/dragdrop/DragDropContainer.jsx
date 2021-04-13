@@ -21,7 +21,7 @@ export function DragDropContainer() {
 	//local states
 	const [isCreatingBoard, setIsCreatingBoard] = useState(false);
 	// select global states
-	const { isLoading, error, boards, sections } = useSelector((state) => state.board);
+	const { isLoading, error, boards, sections } = useSelector((state) => state.trello);
 	// get the default/selected board
 	const [currentBoard, setCurrentBoard] = useState({});
 	// map the sections
@@ -46,11 +46,11 @@ export function DragDropContainer() {
 			setCurrentBoard(selectedBoard);
 		}
 
-		// if (!isLoading && isUndefinedOrEmpty(currentBoard) && boards.length > 0) {
-		// 	// set the first board in the list
-		// 	// if there's no default selected board
-		// 	dispatch(updateCurrentBoardController(boards[0]));
-		// }
+		if (!isLoading && isUndefinedOrEmpty(currentBoard) && boards.length > 0) {
+			// set the first board in the list
+			// if there's no default selected board
+			dispatch(updateCurrentBoardController(boards[0]));
+		}
 
 		// show modal to create a board
 		setIsCreatingBoard(boards && boards.length <= 0);

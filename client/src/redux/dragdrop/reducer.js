@@ -1,12 +1,12 @@
-import { board } from '../initialState';
+import { trelloInitState } from '../initialState';
 import { ActionType } from './actions';
 import { fnSortByIndex } from '../../utils';
 
-export function dragDropReducer(state = board, action) {
+export function trelloReducer(trello = trelloInitState, action) {
 	switch (action.type) {
 		case ActionType.UPDATE_CURRENT_BOARD:
 			const selectedBoard = action.payload;
-			const selectedBoardsUpdate = state.boards.map((board) => {
+			const selectedBoardsUpdate = trello.boards.map((board) => {
 				if (board.id === selectedBoard.id) {
 					// set the selected board
 					return { ...board, index: 1 };
@@ -15,29 +15,29 @@ export function dragDropReducer(state = board, action) {
 				return { ...board, index: 0 };
 			});
 			return {
-				...state,
+				...trello,
 				boards: fnSortByIndex(selectedBoardsUpdate),
 			};
 
 		case ActionType.ADD_BOARD:
 			const addedBoard = action.payload;
 			return {
-				...state,
-				boards: [...state.boards, ...addedBoard],
+				...trello,
+				boards: [...trello.boards, ...addedBoard],
 			};
 
 		case ActionType.UPDATE_BOARD:
 			const updatedBoard = action.payload;
 			// make a copy of boards and replace with updated copy of board record
 			// to maintain the record index in array.
-			const boardUpdates = state.boards.map((board) => {
+			const boardUpdates = trello.boards.map((board) => {
 				if (board.id === updatedBoard.id) {
 					return updatedBoard;
 				}
 				return board;
 			});
 			return {
-				...state,
+				...trello,
 				boards: fnSortByIndex(boardUpdates),
 			};
 
@@ -49,7 +49,7 @@ export function dragDropReducer(state = board, action) {
 			} = action.payload;
 
 			return {
-				...state,
+				...trello,
 				boards: remainingBoards,
 				sections: remainingSections,
 				cards: remainingCards,
@@ -58,30 +58,30 @@ export function dragDropReducer(state = board, action) {
 		case ActionType.ADD_SECTION:
 			const addedSection = action.payload;
 			return {
-				...state,
-				sections: fnSortByIndex([...state.sections, ...addedSection]),
+				...trello,
+				sections: fnSortByIndex([...trello.sections, ...addedSection]),
 			};
 
 		case ActionType.UPDATE_SECTION:
 			const updatedSection = action.payload;
 			// make a copy of sections and replace with updated copy of section record
 			// to maintain the record index in array.
-			const sectionUpdates = state.sections.map((section) => {
+			const sectionUpdates = trello.sections.map((section) => {
 				if (section.id === updatedSection.id) {
 					return updatedSection;
 				}
 				return section;
 			});
 			return {
-				...state,
+				...trello,
 				sections: fnSortByIndex(sectionUpdates),
 			};
 
 		case ActionType.ADD_CARD:
 			const addedCard = action.payload;
 			return {
-				...state,
-				cards: fnSortByIndex([...state.cards, ...addedCard]),
+				...trello,
+				cards: fnSortByIndex([...trello.cards, ...addedCard]),
 			};
 
 		// Update and Move card both use the same operation
@@ -91,32 +91,32 @@ export function dragDropReducer(state = board, action) {
 			const updatedCard = action.payload;
 			// make a copy of cards and replace with updated copy of card record
 			// to maintain the record index in array.
-			const updatedCards = state.cards.map((card) => {
+			const updatedCards = trello.cards.map((card) => {
 				if (card.id === updatedCard.id) {
 					return updatedCard;
 				}
 				return card;
 			});
 			return {
-				...state,
+				...trello,
 				cards: fnSortByIndex(updatedCards),
 			};
 
 		case ActionType.DELETE_CARD:
 			const deletedCard = action.payload;
 			return {
-				...state,
-				cards: state.cards.filter((card) => card.id !== deletedCard.id),
+				...trello,
+				cards: trello.cards.filter((card) => card.id !== deletedCard.id),
 			};
 		case ActionType.IS_LOADING:
 			return {
-				...state,
+				...trello,
 				isLoading: action.isLoading,
 			};
 
 		case ActionType.UPDATE_ERROR:
 			return {
-				...state,
+				...trello,
 				error: action.error,
 			};
 
@@ -127,13 +127,13 @@ export function dragDropReducer(state = board, action) {
 				cards: fetchedCards,
 			} = action.payload;
 			return {
-				...state,
+				...trello,
 				boards: fetchedBoards,
 				sections: fetchedSections,
 				cards: fetchedCards,
 			};
 
 		default:
-			return state;
+			return trello;
 	}
 }
