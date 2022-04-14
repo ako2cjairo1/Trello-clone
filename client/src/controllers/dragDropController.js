@@ -2,34 +2,36 @@ import axios from 'axios';
 import { Actions, ActionType } from '../redux/dragdrop/actions';
 import { fnMapID, fnSortByIndex } from '../utils';
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'http://localhost:5001';
 
-const fetchBoardsController = (url = BASE_URL) => async (dispatch) => {
-	try {
-		// set Loading state
-		dispatch(Actions.isLoading(true));
-		const response = await axios.get(url);
-		const fetchedData = response?.data;
+const fetchBoardsController =
+	(url = BASE_URL) =>
+	async (dispatch) => {
+		try {
+			// set Loading state
+			dispatch(Actions.isLoading(true));
+			const response = await axios.get(url);
+			const fetchedData = response?.data;
 
-		if (fetchedData) {
-			const { boards, sections, cards } = fetchedData;
-			const data = {
-				boards: fnSortByIndex(fnMapID(boards)),
-				sections: fnSortByIndex(fnMapID(sections)),
-				cards: fnSortByIndex(fnMapID(cards)),
-			};
-			// update the state when we get data
-			dispatch(Actions.fetchBoards(data));
+			if (fetchedData) {
+				const { boards, sections, cards } = fetchedData;
+				const data = {
+					boards: fnSortByIndex(fnMapID(boards)),
+					sections: fnSortByIndex(fnMapID(sections)),
+					cards: fnSortByIndex(fnMapID(cards)),
+				};
+				// update the state when we get data
+				dispatch(Actions.fetchBoards(data));
+				// set to not loading
+				dispatch(Actions.isLoading(false));
+			}
+		} catch (error) {
+			// set error state
+			dispatch(Actions.updateError(error));
 			// set to not loading
 			dispatch(Actions.isLoading(false));
 		}
-	} catch (error) {
-		// set error state
-		dispatch(Actions.updateError(error));
-		// set to not loading
-		dispatch(Actions.isLoading(false));
-	}
-};
+	};
 
 const updateCurrentBoardController = (board) => async (dispatch) => {
 	try {
