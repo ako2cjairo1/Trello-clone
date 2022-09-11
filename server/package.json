@@ -5,7 +5,7 @@
 	"main": "server.js",
 	"scripts": {
 		"dev": "nodemon server.js",
-		"import": "node seederScript.js",
+		"impt": "node seederScript.js",
 		"truncate": "node truncateScript.js"
 	},
 	"author": "",
