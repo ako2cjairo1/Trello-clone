@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Actions, ActionType } from '../redux/dragdrop/actions';
 import { fnMapID, fnSortByIndex } from '../utils';
 
-const BASE_URL = 'http://localhost:5001';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const fetchBoardsController =
 	(url = BASE_URL) =>
