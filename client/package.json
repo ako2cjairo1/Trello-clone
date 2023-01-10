@@ -1,5 +1,5 @@
 {
-	"name": "drag-n-drop",
+	"name": "trello-clone",
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
@@ -15,7 +15,7 @@
 	},
 	"scripts": {
 		"start": "react-scripts --openssl-legacy-provider start",
-		"build": "react-scripts --openssl-legacy-provider start"
+		"build": "react-scripts --openssl-legacy-provider build"
 	},
 	"eslintConfig": {
 		"extends": [
