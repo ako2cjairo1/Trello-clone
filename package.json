@@ -5,9 +5,9 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "node server/server.js",
-		"server": "npm dev --prefix server",
+		"server": "npm start --prefix server",
 		"client": "npm start --prefix client",
-		"dev": "concurrently \"npm run dev --prefix server\" \"npm run client\"",
+		"dev": "concurrently \"npm run start --prefix server\" \"npm run client\"",
 		"import": "npm run import --prefix server",
 		"truncate": "npm run truncate --prefix server"
 	},
